@@ -647,3 +647,76 @@ body:has(.landing) {
     padding: 7px 13px;
   }
 }
+
+/* ---------- credit ---------- */
+.l-credit {
+  margin: 4vh 0 0;
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+
+.l-credit a {
+  color: var(--ink);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.l-credit a:hover {
+  text-decoration: underline;
+}
+
+.l-credit-sep {
+  margin: 0 8px;
+}
+
+/* ---------- loading gate ---------- */
+.l-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3vh;
+  background: #f5f5f7;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 700ms ease, visibility 0s linear 700ms;
+}
+
+.l-loader-done {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.l-loader-brand {
+  font-family: var(--font-display, 'Jost Variable', sans-serif);
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.34em;
+  text-indent: 0.34em;
+  color: var(--ink, #1d1d1f);
+  animation: l-loader-breathe 2s ease-in-out infinite;
+}
+
+@keyframes l-loader-breathe {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+
+.l-loader-bar {
+  width: 160px;
+  height: 3px;
+  border-radius: 980px;
+  background: rgb(29 29 31 / 0.08);
+  overflow: hidden;
+}
+
+.l-loader-bar > div {
+  height: 100%;
+  border-radius: 980px;
+  background: #3f7d20;
+  transition: width 300ms ease;
+}

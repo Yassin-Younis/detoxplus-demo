@@ -382,6 +382,13 @@ export function Hardware() {
 
       <footer className="hw-footer">
         <a href="./">{T(BACK)}</a>
+        <p className="hw-credit">
+          {lang === 'tr' ? 'Tasarım ve geliştirme:' : 'Designed & created by'}{' '}
+          <a href="https://ysnyns.com" target="_blank" rel="noreferrer">
+            Yassin Younis
+          </a>{' '}
+          · <a href="mailto:yasin@layermark.com">yasin@layermark.com</a>
+        </p>
       </footer>
     </div>
   )

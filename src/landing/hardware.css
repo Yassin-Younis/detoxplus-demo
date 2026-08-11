@@ -448,3 +448,19 @@ body:has(.hardware) {
     overflow-wrap: anywhere;
   }
 }
+
+.hw-credit {
+  margin-top: 12px;
+  font-size: 13px;
+  color: #6e6e73;
+}
+
+.hw-credit a {
+  color: #1d1d1f;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.hw-credit a:hover {
+  text-decoration: underline;
+}

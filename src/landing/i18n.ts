@@ -37,6 +37,7 @@ const DICT = {
   tryitHint: { en: 'Tap the screen →', tr: 'Ekrana dokun →' },
   tapBadge: { en: 'Tap to try', tr: 'Dokun, dene' },
   navHardware: { en: 'Hardware', tr: 'Donanım' },
+  credit: { en: 'Designed & created by', tr: 'Tasarım ve geliştirme:' },
 
   drinkTitle: { en: 'Meet Green Detox.', tr: 'Green Detox ile tanış.' },
   drinkSub: {

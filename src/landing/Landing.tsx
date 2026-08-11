@@ -118,12 +118,24 @@ export function Landing() {
   const vendedRef = useRef(false)
   const [vending, setVending] = useState(false)
   const [touched, setTouched] = useState(false)
+  const [assetsLoaded, setAssetsLoaded] = useState(0)
+  const [ready, setReady] = useState(false)
   const [lang, setLang] = useState<Lang>(detectLang)
 
   const switchLang = (next: Lang) => {
     setLang(next)
     persistLang(next)
   }
+
+  // loading gate: 6 stills + 5 scrub clips + the vend clip; 6s hard fallback
+  const bumpAsset = () => setAssetsLoaded((n) => n + 1)
+  useEffect(() => {
+    const id = window.setTimeout(() => setReady(true), 6000)
+    return () => window.clearTimeout(id)
+  }, [])
+  useEffect(() => {
+    if (assetsLoaded >= 12) setReady(true)
+  }, [assetsLoaded])
 
   const bounds = useMemo(() => {
     let acc = 0
@@ -319,6 +331,13 @@ export function Landing() {
 
   return (
     <div className="landing" style={{ height: `${TOTAL}vh` }}>
+      <div className={`l-loader ${ready ? 'l-loader-done' : ''}`} aria-hidden={ready}>
+        <span className="wordmark l-loader-brand">DETOX PLUS +</span>
+        <div className="l-loader-bar">
+          <div style={{ width: `${Math.min(100, Math.round((assetsLoaded / 12) * 100))}%` }} />
+        </div>
+      </div>
+
       <header className="l-nav">
         <span className="wordmark l-nav-brand">DETOX PLUS +</span>
         <div className="l-nav-right">
@@ -356,6 +375,8 @@ export function Landing() {
               src={STILLS[k]}
               alt=""
               className="l-media"
+              onLoad={bumpAsset}
+              onError={bumpAsset}
               style={{ opacity: k === 'f1' ? 1 : 0 }}
               ref={(el) => {
                 if (el) stillRefs.current[k] = el
@@ -373,8 +394,10 @@ export function Landing() {
               preload="auto"
               onLoadedMetadata={() => {
                 clipReady.current[k] = true
+                bumpAsset()
                 window.dispatchEvent(new Event('scroll'))
               }}
+              onError={bumpAsset}
               ref={(el) => {
                 if (el) clipRefs.current[k] = el
               }}
@@ -391,7 +414,9 @@ export function Landing() {
             preload="auto"
             onLoadedMetadata={() => {
               clipReady.current.t3 = true
+              bumpAsset()
             }}
+            onError={bumpAsset}
           />
 
           {/* live kiosk on the machine's screen panel */}
@@ -488,6 +513,14 @@ export function Landing() {
               {t(lang, 'finaleKiosk')}
             </a>
           </div>
+          <p className="l-credit">
+            {t(lang, 'credit')}{' '}
+            <a href="https://ysnyns.com" target="_blank" rel="noreferrer">
+              Yassin Younis
+            </a>
+            <span className="l-credit-sep">·</span>
+            <a href="mailto:yasin@layermark.com">yasin@layermark.com</a>
+          </p>
         </section>
       </div>
     </div>
