@@ -1,5 +1,13 @@
 import type { Product } from './engine/types'
 
+// Photorealistic renders (transparent PNGs, filename = product id) override the
+// vector art wherever ProductArt is used; Vite inlines them into the build.
+const ART: Record<string, string> = Object.fromEntries(
+  Object.entries(import.meta.glob('./art/*.png', { eager: true, query: '?url', import: 'default' })).map(
+    ([path, url]) => [path.replace('./art/', '').replace('.png', ''), url as string],
+  ),
+)
+
 // Product renderings used by both the kiosk UI and the machine shelves
 // (machine → kiosk imports are allowed; never the reverse).
 
@@ -76,6 +84,11 @@ export function YogurtJar({ product, width = 44 }: { product: Product; width?: n
 }
 
 export function ProductArt({ product, width }: { product: Product; width?: number }) {
+  const art = ART[product.id]
+  if (art) {
+    const w = width ?? (product.category === 'shot' ? 34 : product.category === 'yogurt' ? 44 : 64)
+    return <img src={art} alt="" width={w} style={{ display: 'block', height: 'auto' }} draggable={false} />
+  }
   if (product.category === 'shot') return <ShotBottle product={product} width={width} />
   if (product.category === 'yogurt') return <YogurtJar product={product} width={width} />
   return <JuiceBottle product={product} width={width} />
