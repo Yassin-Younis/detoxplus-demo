@@ -13,7 +13,7 @@ import { Feedback } from './screens/Feedback'
 import { Results } from './screens/Results'
 import { Confirm, Dispensing, Thanks } from './screens/Finish'
 
-const IDLE_MS = 45_000
+const IDLE_MS = 180_000
 const THANKS_MS = 7_000
 
 interface State {
