@@ -1,0 +1,649 @@
+/* DETOX PLUS + — parallax landing. Apple-ish: off-white, huge type, calm motion. */
+
+body:has(.landing) {
+  background: #f5f5f7;
+}
+
+.landing {
+  --ink: #1d1d1f;
+  --ink-soft: #6e6e73;
+  --accent: #3f7d20;
+
+  /* ---------- type system ----------
+     Display: Jost Variable (the brand face already on the wordmark) —
+     geometric, confident at poster sizes. Body/UI: SF via the system stack —
+     unbeatable rendering for running text at 13–20px on this platform.
+     Scale is fluid against vh because the whole page is vh-driven. */
+  --font-display:
+    'Jost Variable', -apple-system, BlinkMacSystemFont, 'SF Pro Display',
+    'Helvetica Neue', 'Segoe UI', sans-serif;
+  --font-body:
+    -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue',
+    'Segoe UI', sans-serif;
+
+  --fs-display: clamp(2.8rem, 6.4vh, 5rem); /* hero h1 */
+  --fs-headline: clamp(2.4rem, 5.2vh, 4.2rem); /* section h2 */
+  --fs-lede: clamp(1.125rem, 2.2vh, 1.375rem); /* hero/finale sub */
+  --fs-body: clamp(1.0625rem, 2vh, 1.25rem); /* section sub */
+  --fs-title: clamp(1.0625rem, 2.1vh, 1.25rem); /* stat titles */
+  --fs-caption: 0.875rem; /* stat detail */
+  --fs-chip: 0.8125rem; /* chips, nav */
+  --fs-micro: 0.6875rem; /* eyebrows, scroll cue */
+
+  position: relative;
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-synthesis: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ---------- nav ---------- */
+.l-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 28px;
+  background: rgb(245 245 247 / 0.72);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+}
+
+.l-nav-brand {
+  font-family: var(--font-display);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.34em;
+  text-indent: 0.34em;
+  color: var(--ink);
+}
+
+.l-nav-cta,
+.l-cta {
+  border: 0;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: #fff;
+  background: var(--ink);
+  border-radius: 980px;
+  padding: 8px 18px;
+  transition: transform 200ms ease, background 200ms ease;
+}
+
+.l-nav-cta:hover,
+.l-cta:hover {
+  background: #000;
+  transform: scale(1.03);
+}
+
+/* ---------- stage ---------- */
+.l-stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+/* 16:9 media box, centered; page bg matches media bg so letterbox is invisible */
+.l-frame {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  aspect-ratio: 16 / 9;
+  width: min(100vw, 177.78vh);
+  height: auto;
+}
+
+.l-media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  will-change: opacity;
+  pointer-events: none;
+}
+
+.l-vend {
+  z-index: 6;
+}
+
+/* ---------- machine screen panel: the live kiosk ---------- */
+.l-panel {
+  position: absolute;
+  z-index: 4;
+  overflow: hidden;
+  border-radius: 0.5vh;
+  background: #060606;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 600ms ease;
+  transform: perspective(90vh) rotateY(1.6deg);
+}
+
+.l-panel-live {
+  opacity: 1;
+  pointer-events: auto;
+  box-shadow: 0 0 3.2vh rgb(127 176 105 / 0.28);
+}
+
+/* render kiosk at 2x, scale down — crisp text at small sizes */
+.l-panel-scale {
+  width: 200%;
+  height: 200%;
+  transform: scale(0.5);
+  transform-origin: 0 0;
+}
+
+.l-panel-glare {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(115deg, rgb(255 255 255 / 0.08) 0%, transparent 30%);
+}
+
+/* ---------- vend shake (fallback while clip t3 is absent) ---------- */
+@keyframes l-shake {
+  0%, 100% { transform: translate(-50%, -50%); }
+  10% { transform: translate(calc(-50% - 0.5vh), -50%) rotate(-0.25deg); }
+  25% { transform: translate(calc(-50% + 0.55vh), calc(-50% + 0.2vh)) rotate(0.3deg); }
+  40% { transform: translate(calc(-50% - 0.45vh), calc(-50% - 0.15vh)) rotate(-0.2deg); }
+  55% { transform: translate(calc(-50% + 0.35vh), -50%) rotate(0.15deg); }
+  70% { transform: translate(calc(-50% - 0.2vh), calc(-50% + 0.1vh)); }
+  85% { transform: translate(calc(-50% + 0.1vh), -50%); }
+}
+
+.l-shake .l-frame {
+  animation: l-shake 900ms cubic-bezier(0.36, 0.07, 0.19, 0.97) 2;
+}
+
+/* ---------- copy ---------- */
+.l-copy {
+  position: absolute;
+  z-index: 10;
+  max-width: 30rem;
+  opacity: 0;
+  transform: translateY(2.2vh);
+  transition: opacity 700ms ease, transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+
+.l-copy.on {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.l-copy h1,
+.l-copy h2 {
+  margin: 0 0 1.8vh;
+  font-family: var(--font-display);
+  font-size: var(--fs-headline);
+  line-height: 1.06;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+
+/* hero + finale: headline centered in the free band above the shrunken machine */
+.l-copy-hero {
+  left: 50%;
+  top: 9vh;
+  transform: translate(-50%, 2.2vh);
+  text-align: center;
+  max-width: 46rem;
+  width: 90vw;
+}
+
+.l-copy-hero.on {
+  transform: translate(-50%, 0);
+}
+
+.l-copy-hero h1 {
+  font-size: var(--fs-display);
+  line-height: 1.03;
+  letter-spacing: -0.02em;
+}
+
+.l-copy-hero .l-sub {
+  font-size: var(--fs-lede);
+  line-height: 1.45;
+}
+
+.l-copy-left {
+  left: max(28px, 4vw);
+  top: 50%;
+  transform: translateY(calc(-50% + 2.2vh));
+}
+
+.l-copy-left.on {
+  transform: translateY(-50%);
+}
+
+.l-copy-right {
+  right: max(28px, 4vw);
+  top: 50%;
+  transform: translateY(calc(-50% + 2.2vh));
+  text-align: right;
+}
+
+.l-copy-right.on {
+  transform: translateY(-50%);
+}
+
+.l-eyebrow {
+  margin: 0 0 1.2vh;
+  font-family: var(--font-display);
+  font-size: var(--fs-micro);
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  text-indent: 0.3em;
+  color: var(--accent);
+}
+
+.l-sub {
+  margin: 0;
+  font-size: var(--fs-body);
+  line-height: 1.5;
+  color: var(--ink-soft);
+  font-weight: 400;
+}
+
+.l-copy-narrow {
+  max-width: 19rem;
+}
+
+.l-scrollcue {
+  position: absolute;
+  z-index: 10;
+  left: 50%;
+  bottom: 3.5vh;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8vh;
+  opacity: 0;
+  transition: opacity 600ms ease;
+  font-family: var(--font-display);
+  font-size: var(--fs-micro);
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  text-indent: 0.3em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.l-scrollcue.on {
+  opacity: 1;
+  animation: l-cue 2.2s ease-in-out infinite;
+}
+
+/* translate(-50%, …) so the bob keeps the horizontal centering */
+@keyframes l-cue {
+  0%, 100% { opacity: 0.35; transform: translate(-50%, 0); }
+  50% { opacity: 1; transform: translate(-50%, 0.6vh); }
+}
+
+.l-hint {
+  margin-top: 2.4vh;
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--accent);
+}
+
+.l-chips {
+  list-style: none;
+  display: flex;
+  gap: 8px;
+  margin: 2.6vh 0 0;
+  padding: 0;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.l-chips li {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: var(--fs-chip);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  padding: 7px 14px;
+  border-radius: 980px;
+  background: rgb(255 255 255 / 0.72);
+  border: 1px solid rgb(29 29 31 / 0.1);
+  box-shadow: 0 1px 2px rgb(29 29 31 / 0.04);
+  color: var(--ink);
+}
+
+.l-stats {
+  list-style: none;
+  margin: 3vh 0 0;
+  padding: 0;
+  display: grid;
+  gap: 2vh;
+}
+
+.l-stats li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35vh;
+  border-left: 2px solid rgb(63 125 32 / 0.35);
+  padding-left: 16px;
+}
+
+.l-stats strong {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-size: var(--fs-title);
+  line-height: 1.25;
+  font-weight: 600;
+  letter-spacing: -0.008em;
+}
+
+.l-stats span {
+  font-size: var(--fs-caption);
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+
+/* ---------- icons (src/landing/icons.tsx) ---------- */
+.l-ic {
+  flex: none;
+  display: inline-block;
+  vertical-align: -0.185em;
+}
+
+.l-chips .l-ic {
+  width: 15px;
+  height: 15px;
+  color: var(--ink-soft);
+}
+
+.l-stats .l-ic {
+  width: 17px;
+  height: 17px;
+  color: var(--accent);
+}
+
+.l-cue-ic {
+  display: block;
+  width: 14px;
+  height: 14px;
+  color: currentColor;
+}
+
+.l-cta-row {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  margin-top: 3.4vh;
+}
+
+.l-cta {
+  font-size: 0.9375rem;
+  padding: 12px 26px;
+}
+
+.l-cta-ghost {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: var(--ink);
+  text-decoration: none;
+  padding: 12px 10px;
+}
+
+.l-cta-ghost:hover {
+  text-decoration: underline;
+}
+
+/* small screens: see the compact-layout block at the END of this file — it
+   must come last so it wins the cascade over the sections appended below */
+
+/* ---------- language toggle (appended — do not fold into rules above) ---------- */
+.l-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.l-lang {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  user-select: none;
+}
+
+.l-lang button {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  padding: 6px 4px;
+  color: rgb(29 29 31 / 0.35);
+  transition: color 200ms ease;
+}
+
+.l-lang button:hover {
+  color: rgb(29 29 31 / 0.65);
+}
+
+.l-lang button.on {
+  color: var(--ink);
+}
+
+.l-lang > span {
+  font-size: 11px;
+  color: rgb(29 29 31 / 0.25);
+}
+
+/* ---------- demo interactivity cues ---------- */
+.l-panel-live {
+  cursor: pointer;
+  animation: l-panel-pulse 2.6s ease-in-out infinite;
+}
+
+.l-panel-live.l-touched {
+  animation: none;
+}
+
+@keyframes l-panel-pulse {
+  0%, 100% { box-shadow: 0 0 3.2vh rgb(127 176 105 / 0.28); }
+  50% { box-shadow: 0 0 5.4vh rgb(127 176 105 / 0.6); }
+}
+
+.l-tap-badge {
+  position: absolute;
+  z-index: 7;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.9vh;
+  padding: 1vh 1.7vh;
+  border-radius: 980px;
+  background: rgb(255 255 255 / 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgb(29 29 31 / 0.1);
+  box-shadow: 0 1px 6px rgb(29 29 31 / 0.08);
+  font-size: 1.6vh;
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 500ms ease;
+  pointer-events: none;
+}
+
+.l-tap-badge.on {
+  opacity: 1;
+  animation: l-badge-bob 2.2s ease-in-out 600ms infinite;
+}
+
+@keyframes l-badge-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-0.8vh); }
+}
+
+.l-tap-dot {
+  width: 1vh;
+  height: 1vh;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: l-dot-pulse 2.2s ease-in-out infinite;
+}
+
+@keyframes l-dot-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgb(63 125 32 / 0.45); }
+  50% { box-shadow: 0 0 0 0.9vh rgb(63 125 32 / 0); }
+}
+
+.l-nav-link {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+  text-decoration: none;
+  margin-right: 10px;
+}
+
+.l-nav-link:hover {
+  text-decoration: underline;
+}
+
+/* ---------- compact layout: phones, portrait tablets, short landscape ----------
+   MUST mirror isCompactLayout() in Landing.tsx. Everything below is additive;
+   desktop (wide landscape) never matches these queries, so it is untouched.
+   Keep this block LAST so it wins the cascade over the sections above. */
+@media (max-width: 760px), (max-height: 500px), (orientation: portrait) and (max-width: 1024px) {
+  .landing {
+    --fs-display: clamp(2.1rem, 8.4vw, 3.2rem);
+    --fs-headline: clamp(1.65rem, 6.8vw, 2.6rem);
+    --fs-lede: 1.0625rem;
+    --fs-body: 1rem;
+    --fs-title: 1rem;
+  }
+
+  /* size the frame by height instead of width: the machine fills the viewport
+     vertically and the sides crop — the media background is uniform #f5f5f7,
+     so the crop is invisible. dvh keeps iOS toolbar collapse from jumping. */
+  .l-frame {
+    width: auto;
+    height: 100vh;
+    height: 100dvh;
+  }
+
+  /* copy stacks at the bottom on a translucent card so it stays readable
+     over the machine photo */
+  .l-copy-left,
+  .l-copy-right {
+    left: 16px;
+    right: 16px;
+    top: auto;
+    bottom: max(7vh, calc(env(safe-area-inset-bottom) + 4vh));
+    transform: translateY(2.2vh);
+    text-align: left;
+    max-width: none;
+    padding: 16px 18px;
+    border-radius: 18px;
+    background: rgb(245 245 247 / 0.86);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+
+  .l-copy-left.on,
+  .l-copy-right.on {
+    transform: translateY(0);
+  }
+
+  .l-copy-hero {
+    top: max(9vh, 72px); /* stay clear of the fixed nav on short screens */
+  }
+
+  .l-chips {
+    justify-content: flex-start;
+  }
+
+  .l-stats {
+    grid-template-columns: 1fr 1fr;
+    gap: 1.6vh 14px;
+    margin-top: 2vh;
+  }
+
+  .l-cta-row {
+    flex-wrap: wrap;
+  }
+
+  .l-scrollcue {
+    bottom: max(3.5vh, calc(env(safe-area-inset-bottom) + 2vh));
+  }
+
+  /* the compact demo zoom centers the panel in the viewport; park the tap cue
+     just below it (coordinates in frame %, derived from PANEL in Landing.tsx;
+     !important because Landing.tsx positions the badge with inline styles) */
+  .l-tap-badge {
+    left: 38.7% !important; /* PANEL.left + PANEL.width / 2 */
+    top: 79.4% !important; /* just under PANEL.top + PANEL.height */
+    transform: translateX(-50%);
+    font-size: 1.35vh; /* the frame is upscaled ~1.35x while the badge shows */
+    padding: 0.8vh 1.4vh;
+  }
+
+  .l-tap-badge.on {
+    animation-name: l-badge-bob-m; /* variant that keeps the -50% centering */
+  }
+
+  /* while the vend clip / shake plays, pull back to the whole machine so the
+     bottle drop is actually visible (the zoomed frame crops the tray) */
+  .l-vending .l-frame {
+    transform: translate(-50%, -50%) !important;
+    transition: transform 700ms ease;
+  }
+}
+
+/* keeps the badge's horizontal centering during the compact-layout bob */
+@keyframes l-badge-bob-m {
+  0%, 100% { transform: translate(-50%, 0); }
+  50% { transform: translate(-50%, -0.8vh); }
+}
+
+/* phones: tighten the fixed nav so brand + hardware link + lang + CTA fit */
+@media (max-width: 760px) {
+  .l-nav {
+    padding: 10px 14px;
+  }
+  .l-nav-brand {
+    font-size: 0.6875rem;
+    letter-spacing: 0.22em;
+    text-indent: 0.22em;
+  }
+  .l-nav-right {
+    gap: 8px;
+  }
+  .l-nav-link {
+    margin-right: 0;
+    font-size: 12px;
+  }
+  .l-nav-cta {
+    font-size: 0.8125rem;
+    padding: 7px 13px;
+  }
+}

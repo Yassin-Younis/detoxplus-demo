@@ -1,0 +1,450 @@
+/* DETOX PLUS + — hardware page. Same visual language as the landing
+   (off-white, huge Jost display type, green accent) but a plain scrolling
+   document: no scroll engine, self-sufficient token set on .hardware. */
+
+body:has(.hardware) {
+  background: #f5f5f7;
+}
+
+.hardware {
+  --ink: #1d1d1f;
+  --ink-soft: #6e6e73;
+  --accent: #3f7d20;
+  --card: #fff;
+  --line: rgb(29 29 31 / 0.1);
+
+  /* same token names as .landing, redefined locally so the page stands alone.
+     Scale is vw-fluid here (normal document flow, not vh-driven). */
+  --font-display:
+    'Jost Variable', -apple-system, BlinkMacSystemFont, 'SF Pro Display',
+    'Helvetica Neue', 'Segoe UI', sans-serif;
+  --font-body:
+    -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue',
+    'Segoe UI', sans-serif;
+  --font-mono:
+    ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, monospace;
+
+  --fs-display: clamp(2.5rem, 7vw, 4.4rem); /* hero h1 */
+  --fs-headline: clamp(1.65rem, 3.6vw, 2.5rem); /* section h2 */
+  --fs-lede: clamp(1.0625rem, 1.9vw, 1.3125rem); /* hero sub */
+  --fs-body: 1.0625rem; /* running text */
+  --fs-caption: 0.875rem; /* table body, notes */
+  --fs-micro: 0.6875rem; /* eyebrows */
+
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-synthesis: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+}
+
+/* ---------- nav ---------- */
+.hw-nav {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 28px;
+  background: rgb(245 245 247 / 0.72);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+}
+
+.hw-back {
+  font-family: var(--font-display);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.hw-back:hover {
+  color: var(--accent);
+}
+
+.hw-lang {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  user-select: none;
+}
+
+.hw-lang button {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  padding: 6px 4px;
+  color: rgb(29 29 31 / 0.35);
+}
+
+.hw-lang button:hover {
+  color: rgb(29 29 31 / 0.65);
+}
+
+.hw-lang button.on {
+  color: var(--ink);
+}
+
+.hw-lang > span {
+  font-size: 11px;
+  color: rgb(29 29 31 / 0.25);
+}
+
+/* ---------- layout ---------- */
+.hw-hero,
+.hw-section,
+.hw-footer {
+  width: min(860px, calc(100% - 48px));
+  margin-inline: auto;
+}
+
+.hw-hero {
+  padding: clamp(64px, 12vh, 128px) 0 clamp(40px, 7vh, 72px);
+  text-align: center;
+}
+
+.hw-hero h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--fs-display);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+}
+
+.hw-lede {
+  margin: 1.4em auto 0;
+  max-width: 44em;
+  font-size: var(--fs-lede);
+  line-height: 1.55;
+  color: var(--ink-soft);
+  text-wrap: pretty;
+}
+
+.hw-eyebrow {
+  margin: 0 0 0.9em;
+  font-family: var(--font-display);
+  font-size: var(--fs-micro);
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.hw-section {
+  padding: clamp(40px, 8vh, 88px) 0;
+  border-top: 1px solid var(--line);
+}
+
+.hw-section h2 {
+  margin: 0 0 0.55em;
+  font-family: var(--font-display);
+  font-size: var(--fs-headline);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
+.hw-sub {
+  margin: 0 0 2em;
+  max-width: 40em;
+  font-size: var(--fs-body);
+  line-height: 1.6;
+  color: var(--ink-soft);
+  text-wrap: pretty;
+}
+
+.hardware code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  background: rgb(29 29 31 / 0.055);
+  border-radius: 5px;
+  padding: 0.1em 0.35em;
+  white-space: nowrap;
+}
+
+/* ---------- path cards ---------- */
+.hw-paths {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.hw-path {
+  position: relative;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 26px 26px 22px;
+}
+
+.hw-path-a {
+  border-color: rgb(63 125 32 / 0.35);
+}
+
+.hw-badge {
+  display: inline-block;
+  margin-bottom: 14px;
+  font-family: var(--font-display);
+  font-size: var(--fs-micro);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #fff;
+  background: var(--accent);
+  border-radius: 980px;
+  padding: 5px 12px;
+}
+
+.hw-path h3 {
+  margin: 0 0 0.6em;
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.hw-path p {
+  margin: 0;
+  font-size: var(--fs-caption);
+  line-height: 1.6;
+  color: var(--ink-soft);
+  text-wrap: pretty;
+}
+
+.hw-price {
+  margin-top: 1.2em !important;
+  padding-top: 1em;
+  border-top: 1px solid var(--line);
+  font-weight: 600;
+  color: var(--ink) !important;
+}
+
+.hw-note {
+  margin: 24px 0 0;
+  font-size: var(--fs-caption);
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+
+/* ---------- bill of materials ---------- */
+.hw-table-wrap {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.hw-table {
+  width: 100%;
+  min-width: 640px;
+  border-collapse: collapse;
+  font-size: var(--fs-caption);
+  line-height: 1.5;
+}
+
+.hw-table th,
+.hw-table td {
+  text-align: left;
+  vertical-align: top;
+  padding: 13px 18px;
+}
+
+.hw-table th {
+  font-family: var(--font-display);
+  font-size: var(--fs-micro);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  border-bottom: 1px solid var(--line);
+}
+
+.hw-table tbody tr + tr td {
+  border-top: 1px solid rgb(29 29 31 / 0.06);
+}
+
+.hw-table th:first-child,
+.hw-table td:first-child {
+  padding-left: 24px;
+}
+
+.hw-table th:last-child,
+.hw-table td:last-child {
+  padding-right: 24px;
+}
+
+.hw-td-part {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.hw-td-price {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.hw-td-role {
+  color: var(--ink-soft);
+}
+
+.hw-total {
+  margin: 20px 0 0;
+  font-size: var(--fs-body);
+  font-weight: 600;
+}
+
+/* ---------- wiring ---------- */
+.hw-diagram {
+  background: var(--ink);
+  border-radius: 20px;
+  padding: 24px 28px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.hw-diagram pre {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: #f5f5f7;
+}
+
+/* ---------- lists & steps ---------- */
+.hw-list {
+  margin: 24px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 12px;
+  max-width: 46em;
+}
+
+.hw-list li {
+  position: relative;
+  padding-left: 22px;
+  font-size: var(--fs-body);
+  line-height: 1.6;
+  color: var(--ink-soft);
+  text-wrap: pretty;
+}
+
+.hw-list li::before {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 0.62em;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.hw-steps {
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: hw-step;
+  display: grid;
+  gap: 18px;
+  max-width: 46em;
+}
+
+.hw-steps > li {
+  counter-increment: hw-step;
+  position: relative;
+  padding-left: 46px;
+  font-size: var(--fs-body);
+  line-height: 1.6;
+  color: var(--ink-soft);
+  text-wrap: pretty;
+}
+
+.hw-steps > li::before {
+  content: counter(hw-step);
+  position: absolute;
+  left: 0;
+  top: 0.05em;
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--accent);
+  background: rgb(63 125 32 / 0.1);
+  border-radius: 50%;
+}
+
+.hw-substeps {
+  margin-top: 10px;
+}
+
+.hw-substeps li {
+  font-size: var(--fs-caption);
+}
+
+/* ---------- footer ---------- */
+.hw-footer {
+  padding: clamp(40px, 8vh, 72px) 0 56px;
+  border-top: 1px solid var(--line);
+  text-align: center;
+}
+
+.hw-footer a {
+  font-family: var(--font-display);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  color: var(--ink-soft);
+  text-decoration: none;
+}
+
+.hw-footer a:hover {
+  color: var(--accent);
+}
+
+/* ---------- phone ---------- */
+@media (max-width: 640px) {
+  .hw-nav {
+    padding: 12px 18px;
+  }
+
+  .hw-hero,
+  .hw-section,
+  .hw-footer {
+    width: calc(100% - 36px);
+  }
+
+  .hw-paths {
+    grid-template-columns: 1fr;
+  }
+
+  .hw-diagram {
+    padding: 18px 18px;
+  }
+
+  .hw-diagram pre {
+    font-size: 0.71rem;
+  }
+
+  .hw-steps > li {
+    padding-left: 40px;
+  }
+
+  .hardware code {
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+}

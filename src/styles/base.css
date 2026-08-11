@@ -1,0 +1,67 @@
+/* DETOX PLUS + — shared foundation */
+
+:root {
+  /* Brand — from Ali's vision document */
+  --ink: #131311;
+  --paper: #f7f4ee;        /* warm plaster/cream from the product shots */
+  --paper-2: #efeae0;
+  --cream: #fbfaf6;
+  --line: #d9d2c4;
+
+  --green: #4a7c2f;
+  --green-soft: #7fb069;
+  --orange: #e8871e;
+  --red: #8e2043;
+  --yellow: #f2c53d;
+  --sage: #6a8f6b;
+
+  --machine-black: #17171a;
+  --machine-black-2: #232327;
+  --steel: #b9bcc0;
+
+  font-family: 'Jost Variable', 'Avenir Next', 'Futura', 'Century Gothic', sans-serif;
+  color: var(--ink);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--paper);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.wordmark {
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
