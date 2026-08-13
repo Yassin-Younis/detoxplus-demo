@@ -54,6 +54,20 @@ export interface Answers {
   hydration: number
 }
 
+/** Facial expression read from MediaPipe blendshapes, averaged over the scan. */
+export type Mood = 'happy' | 'sad' | 'tired' | 'stressed' | 'neutral'
+
+/** Raw 0..1 blendshape averages the mood was derived from (for tuning/debug). */
+export interface ExpressionAverages {
+  smile: number
+  frown: number
+  browDown: number
+  browInnerUp: number
+  eyeClosed: number
+  eyeSquint: number
+  jawOpen: number
+}
+
 export interface ScanFeatures {
   facePresent: boolean
   /** 0..1 fraction of frame covered by skin-tone foreground */
@@ -68,6 +82,27 @@ export interface ScanFeatures {
   contrast: number
   /** true when produced by the no-camera fallback */
   simulated: boolean
+  /** dominant facial expression over the scan window; absent when no landmarks */
+  mood?: Mood
+  expression?: ExpressionAverages
+}
+
+// ---- ambient context: time, season, weather ----
+
+export type TimeOfDay = 'morning' | 'midday' | 'evening' | 'night'
+
+export type Season = 'winter' | 'spring' | 'summer' | 'autumn'
+
+export type WeatherKind = 'hot' | 'cold' | 'rainy' | 'sunny' | 'mild'
+
+export interface KioskContext {
+  timeOfDay: TimeOfDay
+  season: Season
+  weather: WeatherKind
+  /** current outside temperature, when the weather fetch succeeded */
+  tempC: number | null
+  /** true when weather is a season-based guess (offline / fetch failed) */
+  simulated: boolean
 }
 
 export type ReasonCode =
@@ -77,6 +112,20 @@ export type ReasonCode =
   | 'self-hydration'
   | 'scan-skin'
   | 'scan-hydration'
+  | 'mood-happy'
+  | 'mood-sad'
+  | 'mood-tired'
+  | 'mood-stressed'
+  | 'weather-hot'
+  | 'weather-cold'
+  | 'weather-rainy'
+  | 'weather-sunny'
+  | 'time-morning'
+  | 'time-evening'
+  | 'season-winter'
+  | 'season-spring'
+  | 'season-summer'
+  | 'season-autumn'
   | 'diet-ok'
 
 export interface Recommendation {

@@ -452,7 +452,7 @@
   margin: 0 0 3cqw;
 }
 
-/* contactless waves radiating toward the card */
+/* contactless waves radiating down toward the machine's card reader */
 .k-pay-waves {
   position: relative;
   width: 40cqw;
@@ -839,7 +839,7 @@
 
 /* fill time = FEEDBACK_MS in Feedback.tsx */
 .k-feedback.active .k-fb-bar i {
-  animation: k-fb-fill 5s linear forwards;
+  animation: k-fb-fill 7s linear forwards;
 }
 
 @keyframes k-fb-fill {

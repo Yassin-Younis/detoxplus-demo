@@ -7,7 +7,8 @@
 //   expanding ping ring, wellness callout label).
 // Assets live in /mediapipe; if they can't load, the scan runs without the mesh.
 
-import type { FaceLandmarker as FaceLandmarkerT, NormalizedLandmark } from '@mediapipe/tasks-vision'
+import type { Category, FaceLandmarker as FaceLandmarkerT, NormalizedLandmark } from '@mediapipe/tasks-vision'
+import type { ExpressionAverages } from './engine/types'
 import type { Lang } from './i18n'
 
 // ---- timeline (ms) — Depuff's orchestrator, gently retimed for the kiosk ----
@@ -157,6 +158,7 @@ function loadLandmarker(): Promise<FaceLandmarkerT | null> {
           baseOptions: { modelAssetPath: 'mediapipe/face_landmarker.task', delegate: 'GPU' },
           runningMode: 'VIDEO',
           numFaces: 1,
+          outputFaceBlendshapes: true, // expression read → post-scan mood
         },
       )
     } catch {
@@ -170,7 +172,20 @@ export interface MeshController {
   readonly detected: boolean
   /** Zone currently being inspected (-1 detecting, 0..4, 5+ compiling). */
   readonly zoneIndex: number
+  /** Blendshape averages over the scan so far; null before any face frame. */
+  expression(): ExpressionAverages | null
   stop(): void
+}
+
+// blendshape categoryNames → the coarse channels the mood classifier reads
+const EXPRESSION_CHANNELS: Record<keyof ExpressionAverages, string[]> = {
+  smile: ['mouthSmileLeft', 'mouthSmileRight'],
+  frown: ['mouthFrownLeft', 'mouthFrownRight'],
+  browDown: ['browDownLeft', 'browDownRight'],
+  browInnerUp: ['browInnerUp'],
+  eyeClosed: ['eyeBlinkLeft', 'eyeBlinkRight'],
+  eyeSquint: ['eyeSquintLeft', 'eyeSquintRight'],
+  jawOpen: ['jawOpen'],
 }
 
 export async function startFaceReveal(
@@ -197,6 +212,23 @@ export async function startFaceReveal(
   let smoothed: Pt[] | null = null
   let lastSeen = 0
 
+  // running blendshape sums for the expression read
+  const exprKeys = Object.keys(EXPRESSION_CHANNELS) as (keyof ExpressionAverages)[]
+  const exprSums = Object.fromEntries(exprKeys.map((k) => [k, 0])) as Record<keyof ExpressionAverages, number>
+  let exprFrames = 0
+
+  const accumulateExpression = (categories: Category[] | undefined) => {
+    if (!categories?.length) return
+    const byName = new Map(categories.map((c) => [c.categoryName, c.score]))
+    for (const key of exprKeys) {
+      const names = EXPRESSION_CHANNELS[key]
+      let sum = 0
+      for (const n of names) sum += byName.get(n) ?? 0
+      exprSums[key] += sum / names.length
+    }
+    exprFrames++
+  }
+
   const draw = () => {
     if (stopped) return
     raf = requestAnimationFrame(draw)
@@ -215,7 +247,9 @@ export async function startFaceReveal(
     // detect + exponentially smooth landmarks (live video jitters; Depuff had a still)
     let lm: NormalizedLandmark[] | undefined
     try {
-      lm = landmarker.detectForVideo(video, now)?.faceLandmarks?.[0]
+      const result = landmarker.detectForVideo(video, now)
+      lm = result?.faceLandmarks?.[0]
+      if (lm) accumulateExpression(result?.faceBlendshapes?.[0]?.categories)
     } catch {
       /* keep last frame */
     }
@@ -489,6 +523,10 @@ export async function startFaceReveal(
     },
     get zoneIndex() {
       return zoneIndex
+    },
+    expression() {
+      if (exprFrames < 5) return null // too few face frames to call a mood
+      return Object.fromEntries(exprKeys.map((k) => [k, exprSums[k] / exprFrames])) as unknown as ExpressionAverages
     },
     stop() {
       stopped = true

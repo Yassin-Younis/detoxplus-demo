@@ -1,10 +1,12 @@
 import { useEffect, useReducer, useRef, useState } from 'react'
 import './kiosk.css'
 import { t, type Lang } from './i18n'
-import type { Answers, DietChoice, Goal, Recommendation, ScanFeatures } from './engine/types'
+import type { Answers, DietChoice, Goal, KioskContext, Recommendation, ScanFeatures } from './engine/types'
 import { recommend } from './engine/recommend'
+import { defaultContext, resolveContext } from './engine/context'
+import { makeQuip, type Quip } from './engine/quips'
 import { bus, nextTxnId, type KioskScreen } from './bus'
-import { say, sayResults, cancelSpeech } from './speech'
+import { say, sayResults, sayText, cancelSpeech } from './speech'
 import { ensureAudio, isMuted, setMuted, sfxChime, sfxPos, sfxSelect, sfxTap } from './sfx'
 import { Attract } from './screens/Attract'
 import { QGoals, QDiet, QSelf } from './screens/Questions'
@@ -26,6 +28,7 @@ interface State {
   hydration: number
   scan: ScanFeatures | null
   feedbackVariant: number
+  quip: Quip | null
   recs: Recommendation[]
   chosen: number
   txnId: string | null
@@ -41,6 +44,7 @@ const INITIAL: State = {
   hydration: 3,
   scan: null,
   feedbackVariant: 0,
+  quip: null,
   recs: [],
   chosen: 0,
   txnId: null,
@@ -52,8 +56,8 @@ type Action =
   | { type: 'TOGGLE_GOAL'; goal: Goal }
   | { type: 'TOGGLE_DIET'; diet: DietChoice }
   | { type: 'SET_SELF'; field: 'energy' | 'sleep' | 'hydration'; value: number }
-  | { type: 'SCAN_DONE'; scan: ScanFeatures; variant: number; pin?: string }
-  | { type: 'SCAN_SKIP'; pin?: string }
+  | { type: 'SCAN_DONE'; scan: ScanFeatures; ctx: KioskContext; variant: number; pin?: string }
+  | { type: 'SCAN_SKIP'; ctx: KioskContext; pin?: string }
   | { type: 'FEEDBACK_DONE' }
   | { type: 'CHOOSE'; index: number }
   | { type: 'CONFIRM' }
@@ -61,7 +65,7 @@ type Action =
   | { type: 'DISPENSED' }
   | { type: 'RESET' }
 
-function buildRecs(state: State, scan: ScanFeatures | null, pin?: string): Recommendation[] {
+function buildRecs(state: State, scan: ScanFeatures | null, ctx: KioskContext, pin?: string): Recommendation[] {
   const answers: Answers = {
     goals: state.goals,
     diet: state.diet,
@@ -69,7 +73,7 @@ function buildRecs(state: State, scan: ScanFeatures | null, pin?: string): Recom
     sleep: state.sleep,
     hydration: state.hydration,
   }
-  let recs = recommend(answers, scan, pin ? 24 : 3)
+  let recs = recommend(answers, scan, ctx, pin ? 24 : 3)
   if (pin) {
     const i = recs.findIndex((r) => r.product.id === pin)
     if (i > 0) recs = [recs[i], ...recs.slice(0, i), ...recs.slice(i + 1)]
@@ -102,14 +106,18 @@ function reducer(state: State, action: Action): State {
     case 'SET_SELF':
       return { ...state, [action.field]: action.value }
     case 'SCAN_DONE': {
-      const recs = buildRecs(state, action.scan, action.pin)
-      return { ...state, scan: action.scan, feedbackVariant: action.variant, recs, chosen: 0, screen: 'FEEDBACK' }
+      const recs = buildRecs(state, action.scan, action.ctx, action.pin)
+      // the quip teases the actual top pick, tuned to mood → weather → time
+      const quip = recs.length
+        ? makeQuip(action.scan.mood ?? 'neutral', action.ctx, recs[0].product.name, action.variant)
+        : null
+      return { ...state, scan: action.scan, feedbackVariant: action.variant, quip, recs, chosen: 0, screen: 'FEEDBACK' }
     }
     case 'SCAN_SKIP': {
-      // no scan data — recommend from the answers alone and go straight to
-      // results ("scan complete" feedback would be a lie here)
-      const recs = buildRecs(state, null, action.pin)
-      return { ...state, scan: null, recs, chosen: 0, screen: 'RESULTS' }
+      // no scan data — recommend from the answers + ambient context alone and
+      // go straight to results ("scan complete" feedback would be a lie here)
+      const recs = buildRecs(state, null, action.ctx, action.pin)
+      return { ...state, scan: null, quip: null, recs, chosen: 0, screen: 'RESULTS' }
     }
     case 'FEEDBACK_DONE':
       return state.screen === 'FEEDBACK' ? { ...state, screen: 'RESULTS' } : state
@@ -141,6 +149,18 @@ export function KioskApp({
   const { screen, lang } = state
   const pick = state.recs[state.chosen] ?? null
 
+  // ---- ambient context: resolve weather once at boot, refresh on each reset ----
+  const [ctx, setCtx] = useState<KioskContext>(() => defaultContext())
+  useEffect(() => {
+    let alive = true
+    void resolveContext().then((c) => {
+      if (alive) setCtx(c)
+    })
+    return () => {
+      alive = false
+    }
+  }, [screen === 'ATTRACT'])
+
   // ---- machine bus: state + highlight ----
   useEffect(() => {
     bus.emit('state', { screen })
@@ -167,7 +187,9 @@ export function KioskApp({
         say('scan', lang)
         break
       case 'FEEDBACK':
-        say((['feedback1', 'feedback2', 'feedback3'] as const)[state.feedbackVariant] ?? 'feedback1', lang)
+        // dynamic mood/weather quip when available; canned compliment otherwise
+        if (state.quip) sayText(state.quip.spoken[lang], lang)
+        else say((['feedback1', 'feedback2', 'feedback3'] as const)[state.feedbackVariant] ?? 'feedback1', lang)
         break
       case 'RESULTS':
         if (pick) sayResults(pick.product, lang)
@@ -191,7 +213,7 @@ export function KioskApp({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [screen, lang])
 
-  // ---- payment round-trip: announce on the bus, wait for the card tap ----
+  // ---- payment round-trip: announce on the bus, wait for the POS tap ----
   // If nothing answers (standalone kiosk, machine page), reveal the demo
   // tap-card button after a beat so the flow can never dead-end.
   const [showSimPay, setShowSimPay] = useState(false)
@@ -316,11 +338,11 @@ export function KioskApp({
         active={screen === 'SCAN'}
         onDone={(scan) => {
           sfxChime()
-          dispatch({ type: 'SCAN_DONE', scan, variant: Math.floor(Math.random() * 3), pin: pinFirst })
+          dispatch({ type: 'SCAN_DONE', scan, ctx, variant: Math.floor(Math.random() * 3), pin: pinFirst })
         }}
         onSkip={() => {
           sfxTap()
-          dispatch({ type: 'SCAN_SKIP', pin: pinFirst })
+          dispatch({ type: 'SCAN_SKIP', ctx, pin: pinFirst })
         }}
       />
       <Feedback
@@ -328,6 +350,8 @@ export function KioskApp({
         active={screen === 'FEEDBACK'}
         variant={state.feedbackVariant}
         scan={state.scan}
+        ctx={ctx}
+        quip={state.quip}
         values={{ energy: state.energy, sleep: state.sleep, hydration: state.hydration }}
         goals={state.goals}
         onDone={() => dispatch({ type: 'FEEDBACK_DONE' })}

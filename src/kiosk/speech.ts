@@ -90,3 +90,14 @@ export function sayResults(product: Product, lang: Lang) {
   if (playClip(`${lang}/results-${product.id}`)) return
   speakFallback(resultsLine(lang, product.name), lang)
 }
+
+/**
+ * Speak a dynamically composed line (mood/weather quips). These are generated
+ * per-session so there is no pre-rendered clip; goes straight to the
+ * speechSynthesis fallback.
+ */
+export function sayText(text: string, lang: Lang) {
+  if (!enabled) return
+  cancelSpeech()
+  speakFallback(text, lang)
+}

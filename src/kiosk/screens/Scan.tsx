@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { t, type Lang } from '../i18n'
 import { aggregateScans } from '../engine/scan'
+import { classifyMood } from '../engine/mood'
 import type { ScanFeatures } from '../engine/types'
 import { useCamera } from '../useCamera'
 import { startFaceReveal, REVEAL_TOTAL_MS, type MeshController } from '../faceMesh'
@@ -97,6 +98,12 @@ export function Scan({ lang, active, onDone, onSkip }: Props) {
         if (meshFramesRef.current >= 4) {
           scan.facePresent = true
           scan.centered = Math.max(scan.centered, 0.6)
+        }
+        // expression read → mood, captured before the mesh controller is torn down
+        const expression = meshRef.current?.expression() ?? null
+        if (expression) {
+          scan.expression = expression
+          scan.mood = classifyMood(expression)
         }
         onDone(scan)
       }

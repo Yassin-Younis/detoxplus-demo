@@ -62,6 +62,13 @@ const DICT = {
   fbHydration: { tr: 'Nem göstergen biraz düşük', en: 'Your hydration indicator reads a touch low' },
   fbStress: { tr: 'Stres göstergen sakin görünüyor', en: 'Your stress indicators look calm' },
   fbVitality: { tr: 'Genel canlılık göstergen iyi', en: 'Overall vitality looks good' },
+  fbMoodHappy: { tr: 'Gülümseme algılandı — puan: 10/10', en: 'Smile detected — rating: 10/10' },
+  fbMoodSad: { tr: 'Modun biraz düşük görünüyor — moral modu devrede', en: 'Mood reads a little low — comfort mode on' },
+  fbMoodTired: { tr: 'Gözlerinde uyku var — enerji modu devrede', en: 'Sleepy eyes detected — energy mode on' },
+  fbMoodStressed: { tr: 'Hafif gerginlik izi — sakinlik modu devrede', en: 'A hint of tension — calm mode on' },
+  fbWxHot: { tr: 'Dışarısı sıcak — serinletici bir seçim geliyor', en: 'Hot outside — a cooling pick is coming' },
+  fbWxCold: { tr: 'Dışarısı soğuk — bağışıklık desteği ekleniyor', en: 'Cold outside — immunity support added' },
+  fbWxRainy: { tr: 'Yağmurlu gün — moral desteği ekleniyor', en: 'Rainy day — comfort factored in' },
   fbTuned: { tr: 'Önerin buna göre hazırlanıyor…', en: 'Tuning your match to this…' },
 
   resultsTitle: { tr: 'Sana özel önerimiz', en: 'Made for you' },
@@ -77,8 +84,8 @@ const DICT = {
 
   payTitle: { tr: 'Ödeme', en: 'Payment' },
   payHint: {
-    tr: 'Kartını temassız okuyucuya dokundur',
-    en: 'Tap your card on the contactless reader',
+    tr: 'Kartını aşağıdaki temassız okuyucuya dokundur',
+    en: 'Tap your card on the contactless reader below',
   },
   paySim: { tr: 'Kartı okut (demo)', en: 'Tap card (demo)' },
   dispensing: { tr: 'Hazırlanıyor…', en: 'Preparing your drink…' },
