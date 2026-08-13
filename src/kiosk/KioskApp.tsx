@@ -6,7 +6,7 @@ import { recommend } from './engine/recommend'
 import { defaultContext, resolveContext } from './engine/context'
 import { makeQuip, type Quip } from './engine/quips'
 import { bus, nextTxnId, type KioskScreen } from './bus'
-import { say, sayResults, sayText, cancelSpeech } from './speech'
+import { say, sayResults, sayQuip, cancelSpeech } from './speech'
 import { ensureAudio, isMuted, setMuted, sfxChime, sfxPos, sfxSelect, sfxTap } from './sfx'
 import { Attract } from './screens/Attract'
 import { QGoals, QDiet, QSelf } from './screens/Questions'
@@ -188,7 +188,7 @@ export function KioskApp({
         break
       case 'FEEDBACK':
         // dynamic mood/weather quip when available; canned compliment otherwise
-        if (state.quip) sayText(state.quip.spoken[lang], lang)
+        if (state.quip) sayQuip(state.quip, state.recs[0]?.product.id ?? '', lang)
         else say((['feedback1', 'feedback2', 'feedback3'] as const)[state.feedbackVariant] ?? 'feedback1', lang)
         break
       case 'RESULTS':

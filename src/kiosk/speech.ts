@@ -1,5 +1,6 @@
 import { STATIC_LINES, resultsLine } from './voice/lines.mjs'
 import type { Product } from './engine/types'
+import type { Quip } from './engine/quips'
 import type { Lang } from './i18n'
 
 // Voice output. Prefers pre-generated ElevenLabs clips (warm, human) bundled
@@ -92,9 +93,19 @@ export function sayResults(product: Product, lang: Lang) {
 }
 
 /**
- * Speak a dynamically composed line (mood/weather quips). These are generated
- * per-session so there is no pre-rendered clip; goes straight to the
- * speechSynthesis fallback.
+ * Speak the post-scan quip. Clips are pre-rendered only with the demo's
+ * green-detox pick baked into the {product} slot, so any other product (or a
+ * {temp} template, which has no clip) falls back to TTS of the resolved text.
+ */
+export function sayQuip(quip: Quip, productId: string, lang: Lang) {
+  if (!enabled) return
+  if (productId === 'green-detox' && playClip(`${lang}/quip-${quip.id}`)) return
+  speakFallback(quip.spoken[lang], lang)
+}
+
+/**
+ * Speak a dynamically composed line. No pre-rendered clip; goes straight to
+ * the speechSynthesis fallback.
  */
 export function sayText(text: string, lang: Lang) {
   if (!enabled) return

@@ -7,6 +7,8 @@ import type { KioskContext, Localized, Mood } from './types'
 // Turkish copy avoids attaching suffixes to English product names.
 
 export interface Quip {
+  /** stable template id (bank + index), keys the pre-rendered clip lookup */
+  id: string
   /** big emoji shown on the feedback screen */
   seal: string
   title: Localized
@@ -205,18 +207,26 @@ const fill = (tpl: Localized, product: string, tempC: number | null): Localized 
 
 const pick = <T>(xs: T[], seed: number): T => xs[Math.abs(Math.floor(seed)) % xs.length]
 
+type KeyedTemplate = QuipTemplate & { id: string }
+
+/** Tag templates with stable ids (bank + index) — applied before any filtering so ids never shift. */
+const keyed = (prefix: string, qs: QuipTemplate[] = []): KeyedTemplate[] =>
+  qs.map((q, i) => ({ ...q, id: `${prefix}-${i}` }))
+
 /**
  * Choose the post-scan quip. Priority: a readable mood always wins (that is
  * the moment of magic), then notable weather, then time of day, then charm.
  */
 export function makeQuip(mood: Mood, ctx: KioskContext, productName: string, seed: number): Quip {
-  let bank: QuipTemplate[] | undefined
-  if (mood !== 'neutral') bank = MOOD_QUIPS[mood]
+  let bank: KeyedTemplate[] | undefined
+  if (mood !== 'neutral') bank = keyed(`mood-${mood}`, MOOD_QUIPS[mood])
   else {
     // {temp} quips need a real temperature reading
-    const weatherBank = WEATHER_QUIPS[ctx.weather]?.filter((q) => ctx.tempC != null || !q.spoken.en.includes('{temp}'))
-    bank = weatherBank?.length ? weatherBank : TIME_QUIPS[ctx.timeOfDay]
+    const weatherBank = keyed(`weather-${ctx.weather}`, WEATHER_QUIPS[ctx.weather]).filter(
+      (q) => ctx.tempC != null || !q.spoken.en.includes('{temp}'),
+    )
+    bank = weatherBank.length ? weatherBank : keyed(`time-${ctx.timeOfDay}`, TIME_QUIPS[ctx.timeOfDay])
   }
-  const chosen = pick(bank?.length ? bank : GENERIC_QUIPS, seed)
-  return { seal: chosen.seal, title: chosen.title, spoken: fill(chosen.spoken, productName, ctx.tempC) }
+  const chosen = pick(bank?.length ? bank : keyed('generic', GENERIC_QUIPS), seed)
+  return { id: chosen.id, seal: chosen.seal, title: chosen.title, spoken: fill(chosen.spoken, productName, ctx.tempC) }
 }
