@@ -47,8 +47,10 @@ const CLIPS: Record<ClipKey, string> = {
   t5: 'landing/t5.mp4', // frame 5 -> 6  (cap off, splash)
 }
 
-// screen panel of the machine in frame 1, in % of the 16:9 stage
-const PANEL = { left: 34.25, top: 18.8, width: 8.9, height: 57.9 }
+// screen panel of the machine in frame 1, in % of the 16:9 stage.
+// v2 render mounts the card terminal on the lower panel — the kiosk overlay
+// covers only the glass above it so the terminal stays visible.
+const PANEL = { left: 31.1, top: 13.7, width: 10.7, height: 51.8 }
 
 // ---------- scroll timeline ----------
 
