@@ -51,7 +51,7 @@ const CLIPS: Record<ClipKey, string> = {
 // screen panel of the machine in frame 1, in % of the 16:9 stage.
 // v2 render mounts the card terminal on the lower panel — the kiosk overlay
 // covers only the glass above it so the terminal stays visible.
-const PANEL = { left: 31.1, top: 13.7, width: 10.7, height: 51.8 }
+const PANEL = { left: 26.0, top: 18.2, width: 9.9, height: 56.7 }
 
 // ---------- scroll timeline ----------
 
@@ -212,8 +212,8 @@ export function Landing() {
             ty = -50 + (tyT + 50) * z
           } else {
             scale = 1 + 0.35 * z
-            tx = -50 + 9.3 * z
-            ty = -50 - 1.3 * z
+            tx = -50 + 16.7 * z
+            ty = -50 - 10.7 * z
           }
         }
         frameRef.current.style.transform = `translate(${tx}%, ${ty}%) scale(${scale})`

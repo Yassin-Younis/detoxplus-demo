@@ -468,8 +468,8 @@ body:has(.landing) {
 .l-card {
   position: absolute;
   z-index: 8;
-  left: 16%;
-  top: 32%;
+  left: 10.5%;
+  top: 34%;
   width: 11%;
   aspect-ratio: 1.586;
   container-type: inline-size;
@@ -503,8 +503,8 @@ body:has(.landing) {
 
 /* slides onto the on-screen contactless zone, slightly tilted like a real tap */
 .l-card.tapped {
-  left: 30.9%;
-  top: 40%;
+  left: 25.4%;
+  top: 44%;
   transform: rotate(-8deg) scale(0.72);
   cursor: default;
   pointer-events: none;
@@ -573,8 +573,8 @@ body:has(.landing) {
 }
 
 .l-tap-badge.l-pay-badge {
-  left: 16%;
-  top: 26.5%;
+  left: 10.5%;
+  top: 28.5%;
 }
 
 /* ---------- demo interactivity cues ---------- */
@@ -720,8 +720,8 @@ body:has(.landing) {
      just below it (coordinates in frame %, derived from PANEL in Landing.tsx;
      !important because Landing.tsx positions the badge with inline styles) */
   .l-tap-badge {
-    left: 36.45% !important; /* PANEL.left + PANEL.width / 2 */
-    top: 68.5% !important; /* just under PANEL.top + PANEL.height */
+    left: 30.95% !important; /* PANEL.left + PANEL.width / 2 */
+    top: 77.9% !important; /* just under PANEL.top + PANEL.height */
     transform: translateX(-50%);
     font-size: 1.35vh; /* the frame is upscaled ~1.35x while the badge shows */
     padding: 0.8vh 1.4vh;
@@ -845,20 +845,20 @@ body:has(.landing) {
    card parks over the bottom of the screen glass and slides up to the waves */
 @media (max-width: 760px), (max-height: 500px), (orientation: portrait) and (max-width: 1024px) {
   .l-card {
-    left: 32.5%;
-    top: 55%;
+    left: 27.2%;
+    top: 64%;
     width: 7.5%;
   }
 
   .l-card.tapped {
-    left: 32.8%;
-    top: 42.5%;
+    left: 27.4%;
+    top: 46%;
     transform: rotate(-8deg) scale(0.85);
   }
 
   .l-tap-badge.l-pay-badge {
-    left: 36.25% !important; /* centered on the parked card */
-    top: 51% !important;
+    left: 30.95% !important; /* centered on the parked card */
+    top: 60% !important;
     transform: translateX(-50%);
     font-size: 1vh; /* the frame is upscaled ~2.2x during the compact zoom */
     padding: 0.6vh 1.1vh;
