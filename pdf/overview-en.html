@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>DETOX PLUS + — Product overview</title>
+<style>
+  /* ---------- fonts (Jost variable, from node_modules) ---------- */
+  @font-face {
+    font-family: 'Jost';
+    src: url('../node_modules/@fontsource-variable/jost/files/jost-latin-ext-wght-normal.woff2') format('woff2-variations');
+    font-weight: 100 900;
+    font-style: normal;
+    unicode-range: U+0100-02AF, U+0304, U+0308, U+0329, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20BF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  }
+  @font-face {
+    font-family: 'Jost';
+    src: url('../node_modules/@fontsource-variable/jost/files/jost-latin-wght-normal.woff2') format('woff2-variations');
+    font-weight: 100 900;
+    font-style: normal;
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  }
+
+  /* ---------- tokens ---------- */
+  :root {
+    --paper: #f5f5f7;
+    --ink: #1d1d1f;
+    --ink-2: #494952;
+    --gray: #6e6e73;
+    --green: #3f7d20;
+    --green-soft: #6faf4b;
+    --card: #ffffff;
+    --hair: #d8d8dd;
+    --display: 'Jost', 'Futura', 'Avenir Next', 'Helvetica Neue', sans-serif;
+    --text: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Segoe UI', Arial, sans-serif;
+  }
+
+  /* ---------- page chrome ---------- */
+  @page { size: A4 landscape; margin: 0; }
+  * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  html, body { margin: 0; padding: 0; }
+  body { font-family: var(--text); background: #fff; }
+
+  .page {
+    width: 297mm; height: 210mm;
+    position: relative; overflow: hidden;
+    background: var(--paper); color: var(--ink);
+    page-break-after: always;
+    padding: 16mm 18mm;
+  }
+  .page:last-child { page-break-after: auto; }
+  .page.dark { background: #131314; color: var(--paper); }
+
+  /* ---------- shared type ---------- */
+  .eyebrow {
+    font-family: var(--display);
+    font-weight: 600; font-size: 8.5pt;
+    letter-spacing: .22em; text-transform: uppercase;
+    color: var(--green); margin: 0 0 5mm;
+  }
+  .dark .eyebrow { color: var(--green-soft); }
+  h1, h2 {
+    font-family: var(--display); font-weight: 600;
+    letter-spacing: -0.015em; line-height: 1.04; margin: 0;
+  }
+  h1 { font-size: 46pt; }
+  h2 { font-size: 33pt; }
+  .lede { font-size: 11.5pt; line-height: 1.55; color: var(--ink-2); max-width: 105mm; margin: 6mm 0 0; }
+  .dark .lede { color: #c9c9ce; }
+
+  /* ---------- brand + footer ---------- */
+  .brand {
+    font-family: var(--display); font-weight: 600;
+    font-size: 11pt; letter-spacing: .28em;
+  }
+  .brand b, .pf b { color: var(--green); font-weight: 600; }
+  .dark .brand b, .dark .pf b { color: var(--green-soft); }
+  .pf {
+    position: absolute; left: 18mm; right: 18mm; bottom: 8mm;
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-family: var(--display); font-weight: 500;
+    font-size: 6.5pt; letter-spacing: .24em; color: var(--gray);
+  }
+  .dark .pf { color: #8e8e93; }
+  .pf b { letter-spacing: .24em; }
+
+  /* ---------- image windows (crop framed renders edge-to-edge) ---------- */
+  .win { position: absolute; top: 0; bottom: 0; overflow: hidden; }
+  .winR { right: 0; }
+  .winL { left: 0; }
+  .win img {
+    position: absolute; top: 50%; left: 50%;
+    height: 103%; transform: translate(-50%, -50%);
+  }
+
+  /* ================= cover ================= */
+  .cover { padding: 14mm 18mm; }
+  .cover .win { width: 158mm; }
+  .cover-text { position: absolute; left: 18mm; top: 50%; transform: translateY(-50%); width: 118mm; }
+  .cover-text h1 { font-size: 47pt; }
+  .cover-foot {
+    position: absolute; left: 18mm; bottom: 12mm; margin: 0;
+    font-family: var(--display); font-weight: 500; font-size: 8pt;
+    letter-spacing: .2em; text-transform: uppercase; color: var(--gray);
+  }
+
+  /* ================= options ================= */
+  .options .win { width: 138mm; }
+  .options .win img { transform: translate(-66%, -50%); }
+  .options-text { position: relative; width: 128mm; padding-top: 10mm; }
+  .cats { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; margin-top: 11mm; width: 118mm; }
+  .cat {
+    background: var(--card); border-radius: 4.5mm; padding: 6mm 7mm 5.5mm;
+    box-shadow: 0 1px 0 rgba(29,29,31,.05);
+  }
+  .cat h3 { font-family: var(--display); font-weight: 600; font-size: 12.5pt; margin: 0; letter-spacing: -0.01em; }
+  .cat p { margin: 1.6mm 0 0; font-size: 8.5pt; color: var(--gray); }
+  .cat .from { color: var(--green); font-weight: 600; }
+
+  /* ================= menu ================= */
+  .menu-head { display: flex; align-items: baseline; justify-content: space-between; }
+  .menu-head p.sub { margin: 0; font-size: 9.5pt; color: var(--gray); max-width: 120mm; text-align: right; }
+  .menu-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8mm; margin-top: 9mm; }
+  .mcol h4 {
+    font-family: var(--display); font-weight: 600; font-size: 10pt;
+    letter-spacing: .02em; margin: 0 0 1mm;
+  }
+  .mcol h4 span { color: var(--gray); font-weight: 500; font-size: 8pt; letter-spacing: .04em; }
+  .mcol h4.cont { color: var(--gray); font-weight: 500; font-size: 8pt; letter-spacing: .1em; text-transform: uppercase; padding-top: 1.2mm; }
+  .mcol hr { border: 0; border-top: 0.4mm solid var(--ink); margin: 0 0 3mm; }
+  .mcol hr.thin { border-top: 0.2mm solid var(--hair); }
+  ul.mi { list-style: none; margin: 0; padding: 0; }
+  ul.mi li { margin: 0 0 3.6mm; page-break-inside: avoid; }
+  .mi-row { display: flex; justify-content: space-between; align-items: baseline; gap: 3mm; }
+  .mi-name { font-family: var(--display); font-weight: 500; font-size: 9.5pt; letter-spacing: 0; }
+  .mi-price { font-family: var(--display); font-weight: 600; font-size: 9pt; color: var(--green); white-space: nowrap; }
+  .mi-blurb { margin: 0.6mm 0 0; font-size: 7.6pt; line-height: 1.35; color: var(--gray); }
+  .mcol .gap { height: 5mm; }
+
+  /* ================= design / fits anywhere ================= */
+  .design .win { width: 132mm; }
+  .design .pf { left: 142mm; }
+  .design-text { position: absolute; right: 18mm; top: 50%; transform: translateY(-50%); width: 122mm; }
+  .stat-m2 { display: flex; align-items: baseline; gap: 4mm; margin-top: 11mm; }
+  .stat-m2 .big { font-family: var(--display); font-weight: 600; font-size: 40pt; letter-spacing: -0.02em; color: var(--green); line-height: 1; }
+  .stat-m2 .cap { font-size: 9.5pt; color: var(--gray); max-width: 60mm; line-height: 1.4; }
+  .chips { display: flex; flex-wrap: wrap; gap: 3.5mm; margin-top: 9mm; }
+  .chip {
+    font-family: var(--display); font-weight: 500; font-size: 9.5pt;
+    background: var(--card); border: 0.3mm solid var(--hair);
+    border-radius: 99mm; padding: 2.6mm 6.5mm;
+  }
+
+  /* ================= how it works ================= */
+  .how-top { display: grid; grid-template-columns: 112mm 1fr; gap: 10mm; align-items: center; height: 112mm; }
+  .how-art { position: relative; height: 112mm; overflow: hidden; }
+  .how-art img {
+    position: absolute; top: 50%; left: 50%;
+    height: 112%; width: auto; transform: translate(-50%, -50%);
+  }
+  .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6mm; margin-top: 9mm; }
+  .step { border-top: 0.5mm solid var(--ink); padding-top: 3.5mm; }
+  .step .num { font-family: var(--display); font-weight: 600; font-size: 9pt; color: var(--green); letter-spacing: .12em; }
+  .step h3 { font-family: var(--display); font-weight: 600; font-size: 13pt; margin: 1.6mm 0 2mm; letter-spacing: -0.01em; }
+  .step p { margin: 0; font-size: 8.6pt; line-height: 1.45; color: var(--ink-2); }
+  .how-note { margin: 6mm 0 0; font-size: 7.4pt; color: var(--gray); max-width: 240mm; line-height: 1.45; }
+
+  /* ================= green detox (dark) ================= */
+  .drink-text { position: absolute; left: 18mm; top: 50%; transform: translateY(-50%); width: 118mm; }
+  .drink-meta { margin-top: 7mm; font-family: var(--display); font-weight: 500; font-size: 10.5pt; color: var(--green-soft); letter-spacing: .04em; }
+  .pills { display: flex; flex-wrap: wrap; gap: 3mm; margin-top: 8mm; }
+  .pill {
+    font-family: var(--display); font-weight: 500; font-size: 9pt;
+    color: var(--paper); border: 0.3mm solid #3a3a3c;
+    background: #1f1f21; border-radius: 99mm; padding: 2.2mm 5.5mm;
+  }
+  .gd-art { position: absolute; right: 20mm; bottom: 22mm; display: flex; align-items: flex-end; gap: 13mm; }
+  .gd-art figure { margin: 0; text-align: center; }
+  .gd-art .hero-bottle img { height: 148mm; }
+  .gd-art .shot img { height: 74mm; }
+  .gd-art figcaption { margin-top: 4mm; font-family: var(--display); font-weight: 500; font-size: 8pt; color: #c9c9ce; letter-spacing: .02em; }
+  .gd-art figcaption b { display: block; color: var(--paper); font-weight: 600; font-size: 9pt; margin-bottom: 0.8mm; }
+  .gd-fam {
+    position: absolute; right: 20mm; top: 18mm; width: 72mm; text-align: right;
+    font-family: var(--display); font-weight: 500; font-size: 8pt;
+    letter-spacing: .2em; text-transform: uppercase; color: #8e8e93;
+  }
+
+  /* ================= benefits ================= */
+  .benefits .win { width: 128mm; }
+  .benefits .win img { transform: translate(-58%, -50%); }
+  .benefits-text { position: relative; width: 140mm; padding-top: 6mm; }
+  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; margin-top: 11mm; width: 138mm; }
+  .stat {
+    background: var(--card); border-radius: 4.5mm; padding: 6.5mm 7mm;
+    box-shadow: 0 1px 0 rgba(29,29,31,.05);
+  }
+  .stat h3 { font-family: var(--display); font-weight: 600; font-size: 14pt; margin: 0; letter-spacing: -0.01em; }
+  .stat p { margin: 1.8mm 0 0; font-size: 8.8pt; color: var(--gray); }
+
+  /* ================= hardware ================= */
+  .hw { padding: 13mm 18mm; }
+  .hw-grid { display: grid; grid-template-columns: 96mm 1fr; gap: 10mm; margin-top: 0; }
+  .hw h2 { font-size: 26pt; }
+  .hw .lede { font-size: 8.8pt; margin-top: 4mm; max-width: 96mm; }
+  .hw-path {
+    background: var(--card); border-radius: 4mm; padding: 5mm 6mm;
+    margin-top: 4.5mm; box-shadow: 0 1px 0 rgba(29,29,31,.05);
+  }
+  .hw-path.a { border: 0.4mm solid var(--green); }
+  .hw-badge {
+    display: inline-block; font-family: var(--display); font-weight: 600;
+    font-size: 6.5pt; letter-spacing: .14em; text-transform: uppercase;
+    color: #fff; background: var(--green); border-radius: 99mm;
+    padding: 1.2mm 3.5mm; margin-bottom: 2.2mm;
+  }
+  .hw-path h3 { font-family: var(--display); font-weight: 600; font-size: 11pt; margin: 0 0 1.8mm; }
+  .hw-path p { margin: 0; font-size: 7.6pt; line-height: 1.45; color: var(--ink-2); }
+  .hw-path .price { margin-top: 2mm; font-family: var(--display); font-weight: 600; font-size: 8.5pt; color: var(--green); }
+  .hw-note { margin-top: 4mm; font-size: 7.2pt; color: var(--gray); line-height: 1.4; }
+  .hw-right h3 {
+    font-family: var(--display); font-weight: 600; font-size: 12pt;
+    margin: 0 0 3mm; letter-spacing: -0.01em;
+  }
+  table.bom { width: 100%; border-collapse: collapse; }
+  table.bom th {
+    font-family: var(--display); font-weight: 600; font-size: 7pt;
+    letter-spacing: .1em; text-transform: uppercase; color: var(--gray);
+    text-align: left; padding: 0 2.5mm 1.8mm 0; border-bottom: 0.45mm solid var(--ink);
+  }
+  table.bom td {
+    font-size: 7.4pt; line-height: 1.4; color: var(--ink-2);
+    padding: 2.1mm 2.5mm 2.1mm 0; border-bottom: 0.2mm solid var(--hair);
+    vertical-align: top;
+  }
+  table.bom td.part { font-family: var(--display); font-weight: 600; font-size: 7.8pt; color: var(--ink); }
+  table.bom td.price { font-family: var(--display); font-weight: 600; color: var(--green); white-space: nowrap; }
+  .bom-total { margin-top: 3.2mm; font-family: var(--display); font-weight: 600; font-size: 9pt; color: var(--ink); }
+  .bom-total b { color: var(--green); }
+
+  /* ================= finale (dark) ================= */
+  .finale { text-align: center; }
+  .finale-inner { position: absolute; left: 0; right: 0; top: 47%; transform: translateY(-50%); }
+  .finale h1 { font-size: 52pt; }
+  .finale .lede { margin: 8mm auto 0; max-width: 140mm; }
+  .demo-cta { margin-top: 14mm; }
+  .demo-cta .lbl {
+    font-family: var(--display); font-weight: 600; font-size: 8.5pt;
+    letter-spacing: .22em; text-transform: uppercase; color: #8e8e93; margin: 0 0 4mm;
+  }
+  .demo-url {
+    display: inline-block; font-family: var(--display); font-weight: 600;
+    font-size: 15pt; letter-spacing: .01em; color: #fff;
+    background: var(--green); border-radius: 99mm; padding: 4.5mm 11mm;
+  }
+  .finale-credit {
+    position: absolute; left: 0; right: 0; bottom: 12mm;
+    font-size: 8.5pt; color: #8e8e93;
+  }
+  .finale-credit b { color: var(--paper); font-weight: 600; }
+  .finale-credit span { color: var(--green-soft); }
+</style>
+</head>
+<body>
+
+<!-- ============ 1 · cover ============ -->
+<section class="page cover">
+  <div class="win winR"><img src="../public/landing/f1.png" alt=""></div>
+  <header class="brand">DETOX PLUS <b>+</b></header>
+  <div class="cover-text">
+    <p class="eyebrow">Introducing</p>
+    <h1>Smart vending.<br>Fresh thinking.</h1>
+    <p class="lede">Cold-pressed juice, chosen for you — by a machine that knows what your day needs.</p>
+  </div>
+  <p class="cover-foot">Product overview</p>
+</section>
+
+<!-- ============ 2 · options ============ -->
+<section class="page options">
+  <div class="win winR"><img src="../public/landing/f2.jpg" alt=""></div>
+  <div class="options-text">
+    <p class="eyebrow">The range</p>
+    <h2>Every craving.<br>Every occasion.</h2>
+    <p class="lede">Cold-pressed juices, wellness shots, probiotic yogurts and fresh fruit. Restocked daily.</p>
+    <div class="cats"><div class="cat"><h3>4 cold-pressed juices</h3><p>500 ml · from <span class="from">$5.99</span></p></div>
+<div class="cat"><h3>11 wellness shots</h3><p>60 ml · from <span class="from">$3.99</span></p></div>
+<div class="cat"><h3>5 probiotic yogurts</h3><p>from <span class="from">$4.99</span></p></div>
+<div class="cat"><h3>4 fresh fruits</h3><p>from <span class="from">$2.99</span></p></div></div>
+  </div>
+  <footer class="pf"><span>DETOX PLUS <b>+</b></span><span>02</span></footer>
+</section>
+
+<!-- ============ 3 · menu ============ -->
+<section class="page menu">
+  <div class="menu-head">
+    <div>
+      <p class="eyebrow">The menu</p>
+      <h2>What’s inside.</h2>
+    </div>
+    <p class="sub">The full product line — 24 products across four shelves. Restocked daily.</p>
+  </div>
+  <div class="menu-grid"><div class="mcol"><h4>Cold-pressed juices <span>· 500 ml</span></h4><hr><ul class="mi"><li><div class="mi-row"><span class="mi-name">Green Detox</span><span class="mi-price">$6.99</span></div><p class="mi-blurb">Spinach, cucumber, apple and lemon green cleanse.</p></li><li><div class="mi-row"><span class="mi-name">Immune Boost</span><span class="mi-price">$6.99</span></div><p class="mi-blurb">Orange, carrot and ginger immunity support.</p></li><li><div class="mi-row"><span class="mi-name">Red Detox</span><span class="mi-price">$6.99</span></div><p class="mi-blurb">Beetroot, pomegranate and red berries natural power.</p></li><li><div class="mi-row"><span class="mi-name">Lemon Ginger</span><span class="mi-price">$5.99</span></div><p class="mi-blurb">Refreshing lemon, ginger and mint.</p></li></ul></div>
+<div class="mcol"><h4>Wellness shots <span>· 60 ml</span></h4><hr><ul class="mi"><li><div class="mi-row"><span class="mi-name">Celery Glow Shot</span><span class="mi-price">$3.99</span></div><p class="mi-blurb">Celery pressed for skin glow.</p></li><li><div class="mi-row"><span class="mi-name">Oatmeal Ginger Rise</span><span class="mi-price">$3.99</span></div><p class="mi-blurb">Oat and ginger morning rise.</p></li><li><div class="mi-row"><span class="mi-name">Turmeric Defense</span><span class="mi-price">$3.99</span></div><p class="mi-blurb">Turmeric and black pepper defense.</p></li><li><div class="mi-row"><span class="mi-name">Wheatgrass Cleanse</span><span class="mi-price">$3.99</span></div><p class="mi-blurb">Deep cleanse with wheatgrass.</p></li><li><div class="mi-row"><span class="mi-name">Beetroot Energy</span><span class="mi-price">$3.99</span></div><p class="mi-blurb">Natural energy burst from beetroot.</p></li><li><div class="mi-row"><span class="mi-name">Açaí Antiox</span><span class="mi-price">$4.49</span></div><p class="mi-blurb">Antioxidant care with açaí.</p></li></ul></div>
+<div class="mcol"><h4 class="cont">Shots — continued</h4><hr class="thin"><ul class="mi"><li><div class="mi-row"><span class="mi-name">Coconut Lime Hydrate</span><span class="mi-price">$3.99</span></div><p class="mi-blurb">Deep hydration with coconut water.</p></li><li><div class="mi-row"><span class="mi-name">Berry Bliss Shot</span><span class="mi-price">$4.49</span></div><p class="mi-blurb">A joyful berry moment.</p></li><li><div class="mi-row"><span class="mi-name">Mango Turmeric Sun</span><span class="mi-price">$4.49</span></div><p class="mi-blurb">Sunny energy of mango and turmeric.</p></li><li><div class="mi-row"><span class="mi-name">Activated Charcoal Cleanse</span><span class="mi-price">$4.49</span></div><p class="mi-blurb">Powerful cleanse with activated charcoal.</p></li><li><div class="mi-row"><span class="mi-name">Spirulina Detox</span><span class="mi-price">$4.49</span></div><p class="mi-blurb">Green power of spirulina.</p></li></ul></div>
+<div class="mcol"><h4>Probiotic yogurts</h4><hr><ul class="mi"><li><div class="mi-row"><span class="mi-name">Organic Yogurt</span><span class="mi-price">$4.99</span></div><p class="mi-blurb">Organic milk, probiotic, live culture.</p></li><li><div class="mi-row"><span class="mi-name">Strawberry Yogurt</span><span class="mi-price">$5.49</span></div><p class="mi-blurb">Strawberry probiotic yogurt.</p></li><li><div class="mi-row"><span class="mi-name">Blueberry Yogurt</span><span class="mi-price">$5.49</span></div><p class="mi-blurb">Blueberry probiotic yogurt.</p></li><li><div class="mi-row"><span class="mi-name">Mango Yogurt</span><span class="mi-price">$5.49</span></div><p class="mi-blurb">Mango probiotic yogurt.</p></li><li><div class="mi-row"><span class="mi-name">Chia Yogurt</span><span class="mi-price">$5.99</span></div><p class="mi-blurb">Chia seed probiotic yogurt.</p></li></ul><div class="gap"></div><h4>Fresh fruit</h4><hr><ul class="mi"><li><div class="mi-row"><span class="mi-name">Lemon</span><span class="mi-price">$2.99</span></div></li><li><div class="mi-row"><span class="mi-name">Lime</span><span class="mi-price">$2.99</span></div></li><li><div class="mi-row"><span class="mi-name">Red Apple</span><span class="mi-price">$3.99</span></div></li><li><div class="mi-row"><span class="mi-name">Banana</span><span class="mi-price">$4.99</span></div></li></ul></div></div>
+  <footer class="pf"><span>DETOX PLUS <b>+</b></span><span>03</span></footer>
+</section>
+
+<!-- ============ 4 · design ============ -->
+<section class="page design">
+  <div class="win winL"><img src="../public/landing/f3.jpg" alt=""></div>
+  <div class="design-text">
+    <p class="eyebrow">Design</p>
+    <h2>Slim fit.<br>Fits anywhere.</h2>
+    <p class="lede">One square meter is all it asks.</p>
+    <div class="stat-m2">
+      <span class="big">1&nbsp;m²</span>
+      <span class="cap">of floor space — a lit fascia, a glass front and a portrait touchscreen do the rest.</span>
+    </div>
+    <div class="chips">
+      <span class="chip">Schools</span>
+      <span class="chip">Hospitals</span>
+      <span class="chip">Gyms</span>
+      <span class="chip">Offices</span>
+    </div>
+  </div>
+  <footer class="pf"><span>DETOX PLUS <b>+</b></span><span>04</span></footer>
+</section>
+
+<!-- ============ 5 · how it works ============ -->
+<section class="page how">
+  <div class="how-top">
+    <div>
+      <p class="eyebrow">How it works</p>
+      <h2>Say hello.</h2>
+      <p class="lede">Answer three quick questions. Let it read your day with a face scan. It vends what fits.</p>
+    </div>
+    <div class="how-art"><img src="../public/landing/f4.jpg" alt=""></div>
+  </div>
+  <div class="steps"><div class="step"><span class="num">01</span><h3>Three questions</h3><p>Answer three quick questions about your day — energy, mood, what you need.</p></div>
+<div class="step"><span class="num">02</span><h3>Face scan</h3><p>An on-device face scan reads lighting, framing and wellness cues. Nothing leaves the machine.</p></div>
+<div class="step"><span class="num">03</span><h3>Your match</h3><p>The engine scores the whole catalog against your answers and picks your match.</p></div>
+<div class="step"><span class="num">04</span><h3>Vended, chilled</h3><p>Pay by card and take your bottle — delivered gently by elevator, never dropped.</p></div></div>
+  <p class="how-note">The kiosk speaks — warm, pre-generated voices in Turkish and English. The scan runs fully on-device and is presented as wellness indicators, not medical advice; the questionnaire drives the recommendation.</p>
+  <footer class="pf"><span>DETOX PLUS <b>+</b></span><span>05</span></footer>
+</section>
+
+<!-- ============ 6 · green detox ============ -->
+<section class="page dark drink">
+  <p class="gd-fam">The cleanse family</p>
+  <div class="drink-text">
+    <p class="eyebrow">Signature drink</p>
+    <h2>Meet Green Detox.</h2>
+    <p class="lede">Spinach, cucumber, green apple, lemon. Cold-pressed. Never heated.</p>
+    <div class="pills">
+      <span class="pill">Spinach</span>
+      <span class="pill">Cucumber</span>
+      <span class="pill">Green apple</span>
+      <span class="pill">Lemon</span>
+    </div>
+    <p class="drink-meta">$6.99 · 500 ml · vegan · cold-pressed</p>
+  </div>
+  <div class="gd-art">
+    <figure class="hero-bottle">
+      <img src="../src/kiosk/art/green-detox.png" alt="">
+      <figcaption><b>Green Detox</b>$6.99 · 500 ml</figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="../src/kiosk/art/shot-wheatgrass-cleanse.png" alt="">
+      <figcaption><b>Wheatgrass Cleanse</b>$3.99 · 60 ml</figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="../src/kiosk/art/shot-charcoal-cleanse.png" alt="">
+      <figcaption><b>Charcoal Cleanse</b>$4.49 · 60 ml</figcaption>
+    </figure>
+  </div>
+  <footer class="pf"><span>DETOX PLUS <b>+</b></span><span>06</span></footer>
+</section>
+
+<!-- ============ 7 · benefits ============ -->
+<section class="page benefits">
+  <div class="win winR"><img src="../public/landing/f6.jpg" alt=""></div>
+  <div class="benefits-text">
+    <p class="eyebrow">Benefits</p>
+    <h2>Good.<br>For real.</h2>
+    <div class="stats"><div class="stat"><h3>Deep cleanse</h3><p>detox greens, pressed raw</p></div>
+<div class="stat"><h3>Light digestion</h3><p>cucumber & apple fibre</p></div>
+<div class="stat"><h3>Skin glow</h3><p>antioxidants, no added sugar</p></div>
+<div class="stat"><h3>All-day hydration</h3><p>96% water-rich produce</p></div></div>
+  </div>
+  <footer class="pf"><span>DETOX PLUS <b>+</b></span><span>07</span></footer>
+</section>
+
+<!-- ============ 8 · hardware ============ -->
+<section class="page hw">
+  <div class="hw-grid">
+    <div class="hw-left">
+      <p class="eyebrow">Hardware guide</p>
+      <h2>From demo to machine.</h2>
+      <p class="lede">The kiosk software runs on the real machine unchanged — fullscreen Chromium on an embedded computer, talking to the vending hardware over the same event interface as the demo, carried over a local WebSocket.</p>
+      <div class="hw-path a">
+        <span class="hw-badge">Recommended for the vision</span>
+        <h3>Path A — Real vending chassis</h3>
+        <p>A refrigerated vending machine with elevator delivery and an MDB bus — the industry-standard controller protocol. Glass bottles need elevator delivery, not drop. Examples: AMS Sensit combo coolers, Crane/Vendo glass-front refrigerated vendors. The biggest cost and lead-time item — price it early.</p>
+        <p class="price">$3,000–7,000 new · much less used</p>
+      </div>
+      <div class="hw-path">
+        <h3>Path B — Smart cooler</h3>
+        <p>Keep the open cooler; add an electronic door lock and a card reader. The door unlocks after a card tap and purchases are detected by weight sensors or shelf cameras. Simpler mechanically, harder software; sold as a retrofit kit.</p>
+        <p class="price">Retrofit kit on an existing cooler</p>
+      </div>
+      <p class="hw-note">The parts listed assume Path A and are the same for either path except the MDB interface.</p>
+    </div>
+    <div class="hw-right">
+      <h3>Bill of materials.</h3>
+      <table class="bom">
+        <thead><tr><th>Part</th><th>Example</th><th>~Price</th><th>Role</th></tr></thead>
+        <tbody><tr><td class="part">Embedded computer</td><td>Raspberry Pi 5 (4 GB) + 27 W USB-C PSU + 32 GB A2 microSD</td><td class="price">$95</td><td>Runs the kiosk UI + hardware agent</td></tr>
+<tr><td class="part">Portrait touchscreen</td><td>21.5" open-frame PCAP monitor (faytech FT215TMCAPOB, Mimo M21580C-OF), portrait-mounted</td><td class="price">$350–500</td><td>The BODY SCAN panel</td></tr>
+<tr><td class="part">Camera</td><td>Logitech C920 (or Brio for low light), mounted above the screen at face height</td><td class="price">$70–150</td><td>Face scan (getUserMedia + MediaPipe, all on-device)</td></tr>
+<tr><td class="part">MDB interface</td><td>Qibixx MDB Pi Hat (VMC variant)</td><td class="price">~€130</td><td>Lets the Pi drive the machine's MDB bus; can power the Pi from the machine's 24 V</td></tr>
+<tr><td class="part">Cashless payment</td><td>MDB Level-3 reader — Nayax VPOS Touch / Onyx (or a local Turkish acquirer's MDB reader)</td><td class="price">$200–400 + fees</td><td>Card/NFC payment on the same MDB bus</td></tr>
+<tr><td class="part">Vending chassis</td><td>Refrigerated glass-front vendor with elevator delivery + MDB VMC</td><td class="price">$3,000–7,000</td><td>The machine itself (see the two paths)</td></tr>
+<tr><td class="part">Connectivity</td><td>LTE router (Teltonika RUT241) or venue Wi-Fi; short Ethernet cable</td><td class="price">~$120</td><td>Payments, telemetry, remote menu updates</td></tr>
+<tr><td class="part">Misc</td><td>Powered USB hub, HDMI cable, VESA/mounting brackets, surge-protected strip</td><td class="price">~$60</td><td>—</td></tr></tbody>
+      </table>
+      <p class="bom-total">Total electronics excluding the chassis: <b>roughly $1,000–1,400</b>.</p>
+    </div>
+  </div>
+  <footer class="pf"><span>DETOX PLUS <b>+</b></span><span>08</span></footer>
+</section>
+
+<!-- ============ 9 · finale ============ -->
+<section class="page dark finale">
+  <div class="finale-inner">
+    <h1>Fresh. Smart.<br>Everywhere.</h1>
+    <p class="lede">DETOX PLUS + — smart vending for places that care.</p>
+    <div class="demo-cta">
+      <p class="lbl">Try the live demo</p>
+      <span class="demo-url">yassin-younis.github.io/detoxplus-demo</span>
+    </div>
+  </div>
+  <p class="finale-credit">Designed &amp; created by <b>Yassin Younis</b> · <span>ysnyns.com</span> · yasin@layermark.com</p>
+</section>
+
+<script>
+  // QA helper only (no effect on print): ?p=N shows just page N for screenshots.
+  const p = Number(new URLSearchParams(location.search).get('p'))
+  if (p >= 1) {
+    document.querySelectorAll('.page').forEach((el, i) => {
+      if (i !== p - 1) el.style.display = 'none'
+    })
+  }
+</script>
+</body>
+</html>

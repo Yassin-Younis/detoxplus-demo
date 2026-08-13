@@ -1,0 +1,436 @@
+<!doctype html>
+<html lang="{{LANG}}">
+<head>
+<meta charset="utf-8">
+<title>DETOX PLUS + — {{docLabel}}</title>
+<style>
+  /* ---------- fonts (Jost variable, from node_modules) ---------- */
+  @font-face {
+    font-family: 'Jost';
+    src: url('../node_modules/@fontsource-variable/jost/files/jost-latin-ext-wght-normal.woff2') format('woff2-variations');
+    font-weight: 100 900;
+    font-style: normal;
+    unicode-range: U+0100-02AF, U+0304, U+0308, U+0329, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20BF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  }
+  @font-face {
+    font-family: 'Jost';
+    src: url('../node_modules/@fontsource-variable/jost/files/jost-latin-wght-normal.woff2') format('woff2-variations');
+    font-weight: 100 900;
+    font-style: normal;
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  }
+
+  /* ---------- tokens ---------- */
+  :root {
+    --paper: #f5f5f7;
+    --ink: #1d1d1f;
+    --ink-2: #494952;
+    --gray: #6e6e73;
+    --green: #3f7d20;
+    --green-soft: #6faf4b;
+    --card: #ffffff;
+    --hair: #d8d8dd;
+    --display: 'Jost', 'Futura', 'Avenir Next', 'Helvetica Neue', sans-serif;
+    --text: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Segoe UI', Arial, sans-serif;
+  }
+
+  /* ---------- page chrome ---------- */
+  @page { size: A4 landscape; margin: 0; }
+  * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  html, body { margin: 0; padding: 0; }
+  body { font-family: var(--text); background: #fff; }
+
+  .page {
+    width: 297mm; height: 210mm;
+    position: relative; overflow: hidden;
+    background: var(--paper); color: var(--ink);
+    page-break-after: always;
+    padding: 16mm 18mm;
+  }
+  .page:last-child { page-break-after: auto; }
+  .page.dark { background: #131314; color: var(--paper); }
+
+  /* ---------- shared type ---------- */
+  .eyebrow {
+    font-family: var(--display);
+    font-weight: 600; font-size: 8.5pt;
+    letter-spacing: .22em; text-transform: uppercase;
+    color: var(--green); margin: 0 0 5mm;
+  }
+  .dark .eyebrow { color: var(--green-soft); }
+  h1, h2 {
+    font-family: var(--display); font-weight: 600;
+    letter-spacing: -0.015em; line-height: 1.04; margin: 0;
+  }
+  h1 { font-size: 46pt; }
+  h2 { font-size: 33pt; }
+  .lede { font-size: 11.5pt; line-height: 1.55; color: var(--ink-2); max-width: 105mm; margin: 6mm 0 0; }
+  .dark .lede { color: #c9c9ce; }
+
+  /* ---------- brand + footer ---------- */
+  .brand {
+    font-family: var(--display); font-weight: 600;
+    font-size: 11pt; letter-spacing: .28em;
+  }
+  .brand b, .pf b { color: var(--green); font-weight: 600; }
+  .dark .brand b, .dark .pf b { color: var(--green-soft); }
+  .pf {
+    position: absolute; left: 18mm; right: 18mm; bottom: 8mm;
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-family: var(--display); font-weight: 500;
+    font-size: 6.5pt; letter-spacing: .24em; color: var(--gray);
+  }
+  .dark .pf { color: #8e8e93; }
+  .pf b { letter-spacing: .24em; }
+
+  /* ---------- image windows (crop framed renders edge-to-edge) ---------- */
+  .win { position: absolute; top: 0; bottom: 0; overflow: hidden; }
+  .winR { right: 0; }
+  .winL { left: 0; }
+  .win img {
+    position: absolute; top: 50%; left: 50%;
+    height: 103%; transform: translate(-50%, -50%);
+  }
+
+  /* ================= cover ================= */
+  .cover { padding: 14mm 18mm; }
+  .cover .win { width: 158mm; }
+  .cover-text { position: absolute; left: 18mm; top: 50%; transform: translateY(-50%); width: 118mm; }
+  .cover-text h1 { font-size: 47pt; }
+  .cover-foot {
+    position: absolute; left: 18mm; bottom: 12mm; margin: 0;
+    font-family: var(--display); font-weight: 500; font-size: 8pt;
+    letter-spacing: .2em; text-transform: uppercase; color: var(--gray);
+  }
+
+  /* ================= options ================= */
+  .options .win { width: 138mm; }
+  .options .win img { transform: translate(-66%, -50%); }
+  .options-text { position: relative; width: 128mm; padding-top: 10mm; }
+  .cats { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; margin-top: 11mm; width: 118mm; }
+  .cat {
+    background: var(--card); border-radius: 4.5mm; padding: 6mm 7mm 5.5mm;
+    box-shadow: 0 1px 0 rgba(29,29,31,.05);
+  }
+  .cat h3 { font-family: var(--display); font-weight: 600; font-size: 12.5pt; margin: 0; letter-spacing: -0.01em; }
+  .cat p { margin: 1.6mm 0 0; font-size: 8.5pt; color: var(--gray); }
+  .cat .from { color: var(--green); font-weight: 600; }
+
+  /* ================= menu ================= */
+  .menu-head { display: flex; align-items: baseline; justify-content: space-between; }
+  .menu-head p.sub { margin: 0; font-size: 9.5pt; color: var(--gray); max-width: 120mm; text-align: right; }
+  .menu-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8mm; margin-top: 9mm; }
+  .mcol h4 {
+    font-family: var(--display); font-weight: 600; font-size: 10pt;
+    letter-spacing: .02em; margin: 0 0 1mm;
+  }
+  .mcol h4 span { color: var(--gray); font-weight: 500; font-size: 8pt; letter-spacing: .04em; }
+  .mcol h4.cont { color: var(--gray); font-weight: 500; font-size: 8pt; letter-spacing: .1em; text-transform: uppercase; padding-top: 1.2mm; }
+  .mcol hr { border: 0; border-top: 0.4mm solid var(--ink); margin: 0 0 3mm; }
+  .mcol hr.thin { border-top: 0.2mm solid var(--hair); }
+  ul.mi { list-style: none; margin: 0; padding: 0; }
+  ul.mi li { margin: 0 0 3.6mm; page-break-inside: avoid; }
+  .mi-row { display: flex; justify-content: space-between; align-items: baseline; gap: 3mm; }
+  .mi-name { font-family: var(--display); font-weight: 500; font-size: 9.5pt; letter-spacing: 0; }
+  .mi-price { font-family: var(--display); font-weight: 600; font-size: 9pt; color: var(--green); white-space: nowrap; }
+  .mi-blurb { margin: 0.6mm 0 0; font-size: 7.6pt; line-height: 1.35; color: var(--gray); }
+  .mcol .gap { height: 5mm; }
+
+  /* ================= design / fits anywhere ================= */
+  .design .win { width: 132mm; }
+  .design .pf { left: 142mm; }
+  .design-text { position: absolute; right: 18mm; top: 50%; transform: translateY(-50%); width: 122mm; }
+  .stat-m2 { display: flex; align-items: baseline; gap: 4mm; margin-top: 11mm; }
+  .stat-m2 .big { font-family: var(--display); font-weight: 600; font-size: 40pt; letter-spacing: -0.02em; color: var(--green); line-height: 1; }
+  .stat-m2 .cap { font-size: 9.5pt; color: var(--gray); max-width: 60mm; line-height: 1.4; }
+  .chips { display: flex; flex-wrap: wrap; gap: 3.5mm; margin-top: 9mm; }
+  .chip {
+    font-family: var(--display); font-weight: 500; font-size: 9.5pt;
+    background: var(--card); border: 0.3mm solid var(--hair);
+    border-radius: 99mm; padding: 2.6mm 6.5mm;
+  }
+
+  /* ================= how it works ================= */
+  .how-top { display: grid; grid-template-columns: 112mm 1fr; gap: 10mm; align-items: center; height: 112mm; }
+  .how-art { position: relative; height: 112mm; overflow: hidden; }
+  .how-art img {
+    position: absolute; top: 50%; left: 50%;
+    height: 112%; width: auto; transform: translate(-50%, -50%);
+  }
+  .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6mm; margin-top: 9mm; }
+  .step { border-top: 0.5mm solid var(--ink); padding-top: 3.5mm; }
+  .step .num { font-family: var(--display); font-weight: 600; font-size: 9pt; color: var(--green); letter-spacing: .12em; }
+  .step h3 { font-family: var(--display); font-weight: 600; font-size: 13pt; margin: 1.6mm 0 2mm; letter-spacing: -0.01em; }
+  .step p { margin: 0; font-size: 8.6pt; line-height: 1.45; color: var(--ink-2); }
+  .how-note { margin: 6mm 0 0; font-size: 7.4pt; color: var(--gray); max-width: 240mm; line-height: 1.45; }
+
+  /* ================= green detox (dark) ================= */
+  .drink-text { position: absolute; left: 18mm; top: 50%; transform: translateY(-50%); width: 118mm; }
+  .drink-meta { margin-top: 7mm; font-family: var(--display); font-weight: 500; font-size: 10.5pt; color: var(--green-soft); letter-spacing: .04em; }
+  .pills { display: flex; flex-wrap: wrap; gap: 3mm; margin-top: 8mm; }
+  .pill {
+    font-family: var(--display); font-weight: 500; font-size: 9pt;
+    color: var(--paper); border: 0.3mm solid #3a3a3c;
+    background: #1f1f21; border-radius: 99mm; padding: 2.2mm 5.5mm;
+  }
+  .gd-art { position: absolute; right: 20mm; bottom: 22mm; display: flex; align-items: flex-end; gap: 13mm; }
+  .gd-art figure { margin: 0; text-align: center; }
+  .gd-art .hero-bottle img { height: 148mm; }
+  .gd-art .shot img { height: 74mm; }
+  .gd-art figcaption { margin-top: 4mm; font-family: var(--display); font-weight: 500; font-size: 8pt; color: #c9c9ce; letter-spacing: .02em; }
+  .gd-art figcaption b { display: block; color: var(--paper); font-weight: 600; font-size: 9pt; margin-bottom: 0.8mm; }
+  .gd-fam {
+    position: absolute; right: 20mm; top: 18mm; width: 72mm; text-align: right;
+    font-family: var(--display); font-weight: 500; font-size: 8pt;
+    letter-spacing: .2em; text-transform: uppercase; color: #8e8e93;
+  }
+
+  /* ================= benefits ================= */
+  .benefits .win { width: 128mm; }
+  .benefits .win img { transform: translate(-58%, -50%); }
+  .benefits-text { position: relative; width: 140mm; padding-top: 6mm; }
+  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; margin-top: 11mm; width: 138mm; }
+  .stat {
+    background: var(--card); border-radius: 4.5mm; padding: 6.5mm 7mm;
+    box-shadow: 0 1px 0 rgba(29,29,31,.05);
+  }
+  .stat h3 { font-family: var(--display); font-weight: 600; font-size: 14pt; margin: 0; letter-spacing: -0.01em; }
+  .stat p { margin: 1.8mm 0 0; font-size: 8.8pt; color: var(--gray); }
+
+  /* ================= hardware ================= */
+  .hw { padding: 13mm 18mm; }
+  .hw-grid { display: grid; grid-template-columns: 96mm 1fr; gap: 10mm; margin-top: 0; }
+  .hw h2 { font-size: 26pt; }
+  .hw .lede { font-size: 8.8pt; margin-top: 4mm; max-width: 96mm; }
+  .hw-path {
+    background: var(--card); border-radius: 4mm; padding: 5mm 6mm;
+    margin-top: 4.5mm; box-shadow: 0 1px 0 rgba(29,29,31,.05);
+  }
+  .hw-path.a { border: 0.4mm solid var(--green); }
+  .hw-badge {
+    display: inline-block; font-family: var(--display); font-weight: 600;
+    font-size: 6.5pt; letter-spacing: .14em; text-transform: uppercase;
+    color: #fff; background: var(--green); border-radius: 99mm;
+    padding: 1.2mm 3.5mm; margin-bottom: 2.2mm;
+  }
+  .hw-path h3 { font-family: var(--display); font-weight: 600; font-size: 11pt; margin: 0 0 1.8mm; }
+  .hw-path p { margin: 0; font-size: 7.6pt; line-height: 1.45; color: var(--ink-2); }
+  .hw-path .price { margin-top: 2mm; font-family: var(--display); font-weight: 600; font-size: 8.5pt; color: var(--green); }
+  .hw-note { margin-top: 4mm; font-size: 7.2pt; color: var(--gray); line-height: 1.4; }
+  .hw-right h3 {
+    font-family: var(--display); font-weight: 600; font-size: 12pt;
+    margin: 0 0 3mm; letter-spacing: -0.01em;
+  }
+  table.bom { width: 100%; border-collapse: collapse; }
+  table.bom th {
+    font-family: var(--display); font-weight: 600; font-size: 7pt;
+    letter-spacing: .1em; text-transform: uppercase; color: var(--gray);
+    text-align: left; padding: 0 2.5mm 1.8mm 0; border-bottom: 0.45mm solid var(--ink);
+  }
+  table.bom td {
+    font-size: 7.4pt; line-height: 1.4; color: var(--ink-2);
+    padding: 2.1mm 2.5mm 2.1mm 0; border-bottom: 0.2mm solid var(--hair);
+    vertical-align: top;
+  }
+  table.bom td.part { font-family: var(--display); font-weight: 600; font-size: 7.8pt; color: var(--ink); }
+  table.bom td.price { font-family: var(--display); font-weight: 600; color: var(--green); white-space: nowrap; }
+  .bom-total { margin-top: 3.2mm; font-family: var(--display); font-weight: 600; font-size: 9pt; color: var(--ink); }
+  .bom-total b { color: var(--green); }
+
+  /* ================= finale (dark) ================= */
+  .finale { text-align: center; }
+  .finale-inner { position: absolute; left: 0; right: 0; top: 47%; transform: translateY(-50%); }
+  .finale h1 { font-size: 52pt; }
+  .finale .lede { margin: 8mm auto 0; max-width: 140mm; }
+  .demo-cta { margin-top: 14mm; }
+  .demo-cta .lbl {
+    font-family: var(--display); font-weight: 600; font-size: 8.5pt;
+    letter-spacing: .22em; text-transform: uppercase; color: #8e8e93; margin: 0 0 4mm;
+  }
+  .demo-url {
+    display: inline-block; font-family: var(--display); font-weight: 600;
+    font-size: 15pt; letter-spacing: .01em; color: #fff;
+    background: var(--green); border-radius: 99mm; padding: 4.5mm 11mm;
+  }
+  .finale-credit {
+    position: absolute; left: 0; right: 0; bottom: 12mm;
+    font-size: 8.5pt; color: #8e8e93;
+  }
+  .finale-credit b { color: var(--paper); font-weight: 600; }
+  .finale-credit span { color: var(--green-soft); }
+</style>
+</head>
+<body>
+
+<!-- ============ 1 · cover ============ -->
+<section class="page cover">
+  <div class="win winR"><img src="../public/landing/f1.png" alt=""></div>
+  <header class="brand">DETOX PLUS <b>+</b></header>
+  <div class="cover-text">
+    <p class="eyebrow">{{heroEyebrow}}</p>
+    <h1>{{heroTitle}}</h1>
+    <p class="lede">{{heroSub}}</p>
+  </div>
+  <p class="cover-foot">{{docLabel}}</p>
+</section>
+
+<!-- ============ 2 · options ============ -->
+<section class="page options">
+  <div class="win winR"><img src="../public/landing/f2.jpg" alt=""></div>
+  <div class="options-text">
+    <p class="eyebrow">{{optionsEyebrow}}</p>
+    <h2>{{optionsTitle}}</h2>
+    <p class="lede">{{optionsSub}}</p>
+    <div class="cats">{{CATS}}</div>
+  </div>
+  <footer class="pf"><span>DETOX PLUS <b>+</b></span><span>02</span></footer>
+</section>
+
+<!-- ============ 3 · menu ============ -->
+<section class="page menu">
+  <div class="menu-head">
+    <div>
+      <p class="eyebrow">{{menuEyebrow}}</p>
+      <h2>{{menuTitle}}</h2>
+    </div>
+    <p class="sub">{{menuSub}}</p>
+  </div>
+  <div class="menu-grid">{{MENU_COLS}}</div>
+  <footer class="pf"><span>DETOX PLUS <b>+</b></span><span>03</span></footer>
+</section>
+
+<!-- ============ 4 · design ============ -->
+<section class="page design">
+  <div class="win winL"><img src="../public/landing/f3.jpg" alt=""></div>
+  <div class="design-text">
+    <p class="eyebrow">{{designEyebrow}}</p>
+    <h2>{{designTitle}}</h2>
+    <p class="lede">{{designSub}}</p>
+    <div class="stat-m2">
+      <span class="big">1&nbsp;m²</span>
+      <span class="cap">{{designM2}}</span>
+    </div>
+    <div class="chips">
+      <span class="chip">{{chipSchools}}</span>
+      <span class="chip">{{chipHospitals}}</span>
+      <span class="chip">{{chipGyms}}</span>
+      <span class="chip">{{chipOffices}}</span>
+    </div>
+  </div>
+  <footer class="pf"><span>DETOX PLUS <b>+</b></span><span>04</span></footer>
+</section>
+
+<!-- ============ 5 · how it works ============ -->
+<section class="page how">
+  <div class="how-top">
+    <div>
+      <p class="eyebrow">{{tryitEyebrow}}</p>
+      <h2>{{tryitTitle}}</h2>
+      <p class="lede">{{tryitSub}}</p>
+    </div>
+    <div class="how-art"><img src="../public/landing/f4.jpg" alt=""></div>
+  </div>
+  <div class="steps">{{STEPS}}</div>
+  <p class="how-note">{{howNote}}</p>
+  <footer class="pf"><span>DETOX PLUS <b>+</b></span><span>05</span></footer>
+</section>
+
+<!-- ============ 6 · green detox ============ -->
+<section class="page dark drink">
+  <p class="gd-fam">{{gdFamily}}</p>
+  <div class="drink-text">
+    <p class="eyebrow">{{drinkEyebrow}}</p>
+    <h2>{{drinkTitle}}</h2>
+    <p class="lede">{{drinkSub}}</p>
+    <div class="pills">
+      <span class="pill">{{ingSpinach}}</span>
+      <span class="pill">{{ingCucumber}}</span>
+      <span class="pill">{{ingApple}}</span>
+      <span class="pill">{{ingLemon}}</span>
+    </div>
+    <p class="drink-meta">{{drinkMeta}}</p>
+  </div>
+  <div class="gd-art">
+    <figure class="hero-bottle">
+      <img src="../src/kiosk/art/green-detox.png" alt="">
+      <figcaption><b>Green Detox</b>$6.99 · 500 ml</figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="../src/kiosk/art/shot-wheatgrass-cleanse.png" alt="">
+      <figcaption><b>Wheatgrass Cleanse</b>$3.99 · 60 ml</figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="../src/kiosk/art/shot-charcoal-cleanse.png" alt="">
+      <figcaption><b>Charcoal Cleanse</b>$4.49 · 60 ml</figcaption>
+    </figure>
+  </div>
+  <footer class="pf"><span>DETOX PLUS <b>+</b></span><span>06</span></footer>
+</section>
+
+<!-- ============ 7 · benefits ============ -->
+<section class="page benefits">
+  <div class="win winR"><img src="../public/landing/f6.jpg" alt=""></div>
+  <div class="benefits-text">
+    <p class="eyebrow">{{benefitsEyebrow}}</p>
+    <h2>{{benefitsTitle}}</h2>
+    <div class="stats">{{STATS}}</div>
+  </div>
+  <footer class="pf"><span>DETOX PLUS <b>+</b></span><span>07</span></footer>
+</section>
+
+<!-- ============ 8 · hardware ============ -->
+<section class="page hw">
+  <div class="hw-grid">
+    <div class="hw-left">
+      <p class="eyebrow">{{hwEyebrow}}</p>
+      <h2>{{hwTitle}}</h2>
+      <p class="lede">{{hwSub}}</p>
+      <div class="hw-path a">
+        <span class="hw-badge">{{hwBadge}}</span>
+        <h3>{{hwPathAName}}</h3>
+        <p>{{hwPathABody}}</p>
+        <p class="price">{{hwPathAPrice}}</p>
+      </div>
+      <div class="hw-path">
+        <h3>{{hwPathBName}}</h3>
+        <p>{{hwPathBBody}}</p>
+        <p class="price">{{hwPathBPrice}}</p>
+      </div>
+      <p class="hw-note">{{hwNote}}</p>
+    </div>
+    <div class="hw-right">
+      <h3>{{hwBomTitle}}</h3>
+      <table class="bom">
+        <thead><tr><th>{{hwColPart}}</th><th>{{hwColExample}}</th><th>{{hwColPrice}}</th><th>{{hwColRole}}</th></tr></thead>
+        <tbody>{{BOM_ROWS}}</tbody>
+      </table>
+      <p class="bom-total">{{hwTotal}}</p>
+    </div>
+  </div>
+  <footer class="pf"><span>DETOX PLUS <b>+</b></span><span>08</span></footer>
+</section>
+
+<!-- ============ 9 · finale ============ -->
+<section class="page dark finale">
+  <div class="finale-inner">
+    <h1>{{finaleTitle}}</h1>
+    <p class="lede">{{finaleSub}}</p>
+    <div class="demo-cta">
+      <p class="lbl">{{finaleCta}}</p>
+      <span class="demo-url">yassin-younis.github.io/detoxplus-demo</span>
+    </div>
+  </div>
+  <p class="finale-credit">{{credit}} <b>Yassin Younis</b> · <span>ysnyns.com</span> · yasin@layermark.com</p>
+</section>
+
+<script>
+  // QA helper only (no effect on print): ?p=N shows just page N for screenshots.
+  const p = Number(new URLSearchParams(location.search).get('p'))
+  if (p >= 1) {
+    document.querySelectorAll('.page').forEach((el, i) => {
+      if (i !== p - 1) el.style.display = 'none'
+    })
+  }
+</script>
+</body>
+</html>
