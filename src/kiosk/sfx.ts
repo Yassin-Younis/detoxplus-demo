@@ -111,6 +111,12 @@ export const sfxChime = () => {
   tone({ freq: 784, type: 'sine', duration: 0.5, gain: 0.12, delay: 0.24 })
 }
 
+/** classic contactless-terminal double beep */
+export const sfxPos = () => {
+  tone({ freq: 1560, type: 'square', duration: 0.08, gain: 0.06 })
+  tone({ freq: 1560, type: 'square', duration: 0.28, gain: 0.06, delay: 0.14 })
+}
+
 let scanNodes: { osc: OscillatorNode; gain: GainNode } | null = null
 
 export function sfxScanStart() {

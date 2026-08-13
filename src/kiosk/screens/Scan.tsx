@@ -13,10 +13,13 @@ interface Props {
   lang: Lang
   active: boolean
   onDone: (scan: ScanFeatures) => void
+  onSkip: () => void
 }
 
-export function Scan({ lang, active, onDone }: Props) {
+export function Scan({ lang, active, onDone, onSkip }: Props) {
   const camera = useCamera()
+  // The camera only opens after an explicit tap — never on screen entry.
+  const [scanning, setScanning] = useState(false)
   const [progress, setProgress] = useState(0)
   const [meshLive, setMeshLive] = useState(false)
   const doneRef = useRef(false)
@@ -29,7 +32,11 @@ export function Scan({ lang, active, onDone }: Props) {
   // Depuff-style reveal once the camera is live; the scan window stretches to
   // fit the full reveal from the moment the landmarker is ready.
   useEffect(() => {
-    if (!active || camera.live !== true) return
+    if (!active) setScanning(false)
+  }, [active])
+
+  useEffect(() => {
+    if (!active || !scanning || camera.live !== true) return
     let cancelled = false
     const video = camera.videoRef.current
     const canvas = meshCanvasRef.current
@@ -47,10 +54,10 @@ export function Scan({ lang, active, onDone }: Props) {
       setMeshLive(false)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [active, camera.live])
+  }, [active, scanning, camera.live])
 
   useEffect(() => {
-    if (!active) return
+    if (!active || !scanning) return
     doneRef.current = false
     meshFramesRef.current = 0
     lastZoneRef.current = -1
@@ -100,7 +107,7 @@ export function Scan({ lang, active, onDone }: Props) {
       sfxScanStop()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [active])
+  }, [active, scanning])
 
   const f = camera.latest
   const faceOk = (f?.facePresent ?? false) || (meshRef.current?.detected ?? false)
@@ -116,6 +123,7 @@ export function Scan({ lang, active, onDone }: Props) {
         <span className="k-title-ico">📸</span>
         {t(lang, 'scanIntroTitle')}
       </h2>
+      {!scanning && <p className="k-sub">{t(lang, 'scanAskSub')}</p>}
       <div className="k-scan-stage">
         <div className="k-scan-video-wrap">
           {camera.live !== true && (
@@ -128,8 +136,8 @@ export function Scan({ lang, active, onDone }: Props) {
           )}
           <video ref={camera.videoRef} playsInline muted style={{ display: camera.live ? undefined : 'none' }} />
           <canvas ref={meshCanvasRef} className="k-scan-mesh" style={{ opacity: meshLive ? 1 : 0 }} />
-          {!meshLive && <div className="k-scan-line" />}
-          {camera.live === false && <div className="k-badge-sim">{t(lang, 'scanSimulated')}</div>}
+          {scanning && !meshLive && <div className="k-scan-line" />}
+          {scanning && camera.live === false && <div className="k-badge-sim">{t(lang, 'scanSimulated')}</div>}
         </div>
         <svg className="k-scan-ring" viewBox="0 0 100 133" preserveAspectRatio="none" aria-hidden="true">
           <rect x="2" y="2" width="96" height="129" rx="7" fill="none" className="track" strokeWidth="1.6" />
@@ -149,17 +157,28 @@ export function Scan({ lang, active, onDone }: Props) {
           />
         </svg>
       </div>
-      <div className="k-scan-readouts">
-        {f ? (
-          <>
-            {readout(t(lang, 'scanLighting'), f.lighting > 0.45)}
-            {readout(t(lang, 'scanFraming'), f.centered > 0.4 || faceOk)}
-            {readout(t(lang, 'scanFace'), faceOk)}
-          </>
-        ) : (
-          <span>{t(lang, 'scanning')}</span>
-        )}
-      </div>
+      {scanning ? (
+        <div className="k-scan-readouts">
+          {f ? (
+            <>
+              {readout(t(lang, 'scanLighting'), f.lighting > 0.45)}
+              {readout(t(lang, 'scanFraming'), f.centered > 0.4 || faceOk)}
+              {readout(t(lang, 'scanFace'), faceOk)}
+            </>
+          ) : (
+            <span>{t(lang, 'scanning')}</span>
+          )}
+        </div>
+      ) : (
+        <div className="k-footer k-scan-actions">
+          <button className="k-btn k-btn-ghost" onClick={onSkip}>
+            {t(lang, 'scanSkip')}
+          </button>
+          <button className="k-btn k-btn-primary" onClick={() => setScanning(true)}>
+            📸 {t(lang, 'scanStart')}
+          </button>
+        </div>
+      )}
       <div className="k-disclaimer">{t(lang, 'scanDisclaimer')}</div>
     </section>
   )

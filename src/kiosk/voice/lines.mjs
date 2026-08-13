@@ -35,6 +35,10 @@ export const STATIC_LINES = {
     tr: 'Siparişini onaylıyor musun?',
     en: 'Would you like to confirm your order?',
   },
+  payment: {
+    tr: 'Ödeme için kartını temassız okuyucuya dokundur.',
+    en: 'To pay, please tap your card on the contactless reader.',
+  },
   dispensing: {
     tr: 'Harika seçim! İçeceğin hazırlanıyor.',
     en: 'Great choice! Your drink is on its way.',

@@ -12,6 +12,7 @@ export type KioskScreen =
   | 'FEEDBACK'
   | 'RESULTS'
   | 'CONFIRM'
+  | 'PAYMENT'
   | 'DISPENSING'
   | 'THANKS'
 
@@ -20,6 +21,10 @@ export interface BusEvents {
   state: { screen: KioskScreen }
   /** kiosk → machine: spotlight a product on the shelf */
   highlight: { productId: string | null }
+  /** kiosk → machine: awaiting card tap on the contactless reader */
+  payment: { txnId: string; amountCents: number; productId: string }
+  /** machine → kiosk: the reader approved (or declined) the payment */
+  'payment-result': { txnId: string; ok: boolean }
   /** kiosk → machine: vend this product */
   dispense: { productId: string; txnId: string }
   /** machine → kiosk: vend finished (animation landed / motor completed) */

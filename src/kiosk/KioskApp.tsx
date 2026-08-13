@@ -5,13 +5,13 @@ import type { Answers, DietChoice, Goal, Recommendation, ScanFeatures } from './
 import { recommend } from './engine/recommend'
 import { bus, nextTxnId, type KioskScreen } from './bus'
 import { say, sayResults, cancelSpeech } from './speech'
-import { ensureAudio, isMuted, setMuted, sfxChime, sfxSelect, sfxTap } from './sfx'
+import { ensureAudio, isMuted, setMuted, sfxChime, sfxPos, sfxSelect, sfxTap } from './sfx'
 import { Attract } from './screens/Attract'
 import { QGoals, QDiet, QSelf } from './screens/Questions'
 import { Scan } from './screens/Scan'
 import { Feedback } from './screens/Feedback'
 import { Results } from './screens/Results'
-import { Confirm, Dispensing, Thanks } from './screens/Finish'
+import { Confirm, Dispensing, Payment, Thanks } from './screens/Finish'
 
 const IDLE_MS = 180_000
 const THANKS_MS = 7_000
@@ -53,11 +53,30 @@ type Action =
   | { type: 'TOGGLE_DIET'; diet: DietChoice }
   | { type: 'SET_SELF'; field: 'energy' | 'sleep' | 'hydration'; value: number }
   | { type: 'SCAN_DONE'; scan: ScanFeatures; variant: number; pin?: string }
+  | { type: 'SCAN_SKIP'; pin?: string }
   | { type: 'FEEDBACK_DONE' }
   | { type: 'CHOOSE'; index: number }
   | { type: 'CONFIRM' }
+  | { type: 'PAID' }
   | { type: 'DISPENSED' }
   | { type: 'RESET' }
+
+function buildRecs(state: State, scan: ScanFeatures | null, pin?: string): Recommendation[] {
+  const answers: Answers = {
+    goals: state.goals,
+    diet: state.diet,
+    energy: state.energy,
+    sleep: state.sleep,
+    hydration: state.hydration,
+  }
+  let recs = recommend(answers, scan, pin ? 24 : 3)
+  if (pin) {
+    const i = recs.findIndex((r) => r.product.id === pin)
+    if (i > 0) recs = [recs[i], ...recs.slice(0, i), ...recs.slice(i + 1)]
+    recs = recs.slice(0, 3)
+  }
+  return recs
+}
 
 function reducer(state: State, action: Action): State {
   switch (action.type) {
@@ -83,27 +102,23 @@ function reducer(state: State, action: Action): State {
     case 'SET_SELF':
       return { ...state, [action.field]: action.value }
     case 'SCAN_DONE': {
-      const answers: Answers = {
-        goals: state.goals,
-        diet: state.diet,
-        energy: state.energy,
-        sleep: state.sleep,
-        hydration: state.hydration,
-      }
-      let recs = recommend(answers, action.scan, action.pin ? 24 : 3)
-      if (action.pin) {
-        const i = recs.findIndex((r) => r.product.id === action.pin)
-        if (i > 0) recs = [recs[i], ...recs.slice(0, i), ...recs.slice(i + 1)]
-        recs = recs.slice(0, 3)
-      }
+      const recs = buildRecs(state, action.scan, action.pin)
       return { ...state, scan: action.scan, feedbackVariant: action.variant, recs, chosen: 0, screen: 'FEEDBACK' }
+    }
+    case 'SCAN_SKIP': {
+      // no scan data — recommend from the answers alone and go straight to
+      // results ("scan complete" feedback would be a lie here)
+      const recs = buildRecs(state, null, action.pin)
+      return { ...state, scan: null, recs, chosen: 0, screen: 'RESULTS' }
     }
     case 'FEEDBACK_DONE':
       return state.screen === 'FEEDBACK' ? { ...state, screen: 'RESULTS' } : state
     case 'CHOOSE':
       return { ...state, chosen: action.index }
     case 'CONFIRM':
-      return { ...state, screen: 'DISPENSING', txnId: nextTxnId() }
+      return { ...state, screen: 'PAYMENT', txnId: nextTxnId() }
+    case 'PAID':
+      return state.screen === 'PAYMENT' ? { ...state, screen: 'DISPENSING' } : state
     case 'DISPENSED':
       return { ...state, screen: 'THANKS' }
     case 'RESET':
@@ -160,6 +175,9 @@ export function KioskApp({
       case 'CONFIRM':
         say('confirm', lang)
         break
+      case 'PAYMENT':
+        say('payment', lang)
+        break
       case 'DISPENSING':
         say('dispensing', lang)
         break
@@ -172,6 +190,31 @@ export function KioskApp({
     // speak only on screen entry, not on pick change
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [screen, lang])
+
+  // ---- payment round-trip: announce on the bus, wait for the card tap ----
+  // If nothing answers (standalone kiosk, machine page), reveal the demo
+  // tap-card button after a beat so the flow can never dead-end.
+  const [showSimPay, setShowSimPay] = useState(false)
+  useEffect(() => {
+    if (screen !== 'PAYMENT' || !state.txnId || !pick) {
+      setShowSimPay(false)
+      return
+    }
+    const txnId = state.txnId
+    bus.emit('payment', { txnId, amountCents: pick.product.priceCents, productId: pick.product.id })
+    const off = bus.on('payment-result', (r) => {
+      if (r.txnId === txnId && r.ok) {
+        sfxChime()
+        dispatch({ type: 'PAID' })
+      }
+    })
+    const reveal = window.setTimeout(() => setShowSimPay(true), standalone ? 0 : 8000)
+    return () => {
+      off()
+      window.clearTimeout(reveal)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [screen, state.txnId])
 
   // ---- dispense round-trip ----
   useEffect(() => {
@@ -275,6 +318,10 @@ export function KioskApp({
           sfxChime()
           dispatch({ type: 'SCAN_DONE', scan, variant: Math.floor(Math.random() * 3), pin: pinFirst })
         }}
+        onSkip={() => {
+          sfxTap()
+          dispatch({ type: 'SCAN_SKIP', pin: pinFirst })
+        }}
       />
       <Feedback
         lang={lang}
@@ -309,6 +356,17 @@ export function KioskApp({
           dispatch({ type: 'CONFIRM' })
         }}
         onBack={() => go('RESULTS')}
+      />
+      <Payment
+        lang={lang}
+        active={screen === 'PAYMENT'}
+        pick={pick}
+        allowSim={showSimPay}
+        onSimPay={() => {
+          sfxPos()
+          dispatch({ type: 'PAID' })
+        }}
+        onBack={() => go('CONFIRM')}
       />
       <Dispensing lang={lang} active={screen === 'DISPENSING'} pick={pick} />
       <Thanks lang={lang} active={screen === 'THANKS'} />

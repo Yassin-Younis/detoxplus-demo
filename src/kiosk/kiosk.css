@@ -442,6 +442,46 @@
   box-shadow: 0 1cqh 2.6cqh color-mix(in srgb, var(--row, var(--green-soft)) 40%, transparent);
 }
 
+/* ---------- payment ---------- */
+
+.k-pay-amount {
+  font-size: 11cqw;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--green-soft);
+  margin: 0 0 3cqw;
+}
+
+/* contactless waves radiating toward the card */
+.k-pay-waves {
+  position: relative;
+  width: 40cqw;
+  height: 22cqw;
+  margin: 1cqw auto 0;
+}
+
+.k-pay-waves i {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 1.1cqw solid transparent;
+  border-bottom-color: var(--green-soft);
+  border-radius: 50%;
+  opacity: 0;
+  animation: k-pay-wave 1.8s ease-out infinite;
+}
+
+.k-pay-waves i:nth-child(1) { width: 8cqw; height: 8cqw; top: 0; }
+.k-pay-waves i:nth-child(2) { width: 16cqw; height: 16cqw; top: -2cqw; animation-delay: 250ms; }
+.k-pay-waves i:nth-child(3) { width: 24cqw; height: 24cqw; top: -4cqw; animation-delay: 500ms; }
+
+@keyframes k-pay-wave {
+  0% { opacity: 0; }
+  25% { opacity: 1; }
+  70% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
 /* ---------- scan ---------- */
 
 .k-scan {
@@ -525,6 +565,11 @@
 @keyframes k-scanline {
   0%, 100% { top: 10%; }
   50% { top: 88%; }
+}
+
+.k-scan-actions {
+  align-self: stretch;
+  margin-top: 5cqw;
 }
 
 .k-scan-readouts {

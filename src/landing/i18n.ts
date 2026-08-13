@@ -36,6 +36,7 @@ const DICT = {
   },
   tryitHint: { en: 'Tap the screen →', tr: 'Ekrana dokun →' },
   tapBadge: { en: 'Tap to try', tr: 'Dokun, dene' },
+  payCta: { en: 'Tap the card to pay', tr: 'Ödemek için karta dokun' },
   navHardware: { en: 'Hardware', tr: 'Donanım' },
   credit: { en: 'Designed & created by', tr: 'Tasarım ve geliştirme:' },
 

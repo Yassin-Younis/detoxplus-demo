@@ -37,6 +37,12 @@ const DICT = {
   scaleHigh: { tr: 'Yüksek', en: 'High' },
 
   scanIntroTitle: { tr: 'Sağlıklı yaşam taraması', en: 'Wellness scan' },
+  scanAskSub: {
+    tr: 'İsteğe bağlı hızlı yüz taraması önerini kişiselleştirir.',
+    en: 'An optional quick face scan personalizes your match.',
+  },
+  scanStart: { tr: 'Kamerayı aç ve tara', en: 'Open camera & scan' },
+  scanSkip: { tr: 'Taramayı atla', en: 'Skip scan' },
   scanning: { tr: 'Taranıyor…', en: 'Scanning…' },
   scanLighting: { tr: 'Işık', en: 'Lighting' },
   scanFraming: { tr: 'Konum', en: 'Framing' },
@@ -68,6 +74,13 @@ const DICT = {
 
   confirmTitle: { tr: 'Onaylıyor musun?', en: 'Confirm your order' },
   confirmYes: { tr: 'Evet, hazırla!', en: 'Yes, make it!' },
+
+  payTitle: { tr: 'Ödeme', en: 'Payment' },
+  payHint: {
+    tr: 'Kartını temassız okuyucuya dokundur',
+    en: 'Tap your card on the contactless reader',
+  },
+  paySim: { tr: 'Kartı okut (demo)', en: 'Tap card (demo)' },
   dispensing: { tr: 'Hazırlanıyor…', en: 'Preparing your drink…' },
   thanksTitle: { tr: 'Afiyet olsun!', en: 'Enjoy!' },
   thanksSub: { tr: 'İçeceğini alt bölmeden alabilirsin', en: 'Collect your drink from the tray below' },

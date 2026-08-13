@@ -2,6 +2,7 @@ import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
 import './landing.css'
 import { KioskApp } from '../kiosk/KioskApp'
 import { bus } from '../kiosk/bus'
+import { sfxPos, sfxTap } from '../kiosk/sfx'
 import { detectLang, persistLang, t, type Lang } from './i18n'
 import {
   ChevronDownIcon,
@@ -120,6 +121,8 @@ export function Landing() {
   const vendedRef = useRef(false)
   const [vending, setVending] = useState(false)
   const [touched, setTouched] = useState(false)
+  const [paying, setPaying] = useState<{ txnId: string } | null>(null)
+  const [payTapped, setPayTapped] = useState(false)
   const [assetsLoaded, setAssetsLoaded] = useState(0)
   const [ready, setReady] = useState(false)
   const [lang, setLang] = useState<Lang>(detectLang)
@@ -310,7 +313,17 @@ export function Landing() {
         }, 1400)
       }
     })
+    // kiosk asks for payment -> surface the demo card next to the screen
+    const offPay = bus.on('payment', ({ txnId }) => {
+      setPayTapped(false)
+      setPaying({ txnId })
+    })
     const offState = bus.on('state', ({ screen }) => {
+      // leaving the payment screen (paid, back, idle reset) retires the card
+      if (screen !== 'PAYMENT') {
+        setPaying(null)
+        setPayTapped(false)
+      }
       // a fresh session un-vends the tray when the kiosk resets to attract
       if (screen === 'Q_GOALS' && vendedRef.current) {
         vendedRef.current = false
@@ -319,9 +332,24 @@ export function Landing() {
     })
     return () => {
       off()
+      offPay()
       offState()
     }
   }, [])
+
+  // tap the card on the on-screen reader: slide over, beep, approve, hand back
+  const payTimers = useRef<number[]>([])
+  useEffect(() => () => payTimers.current.forEach(window.clearTimeout), [])
+  const payNow = () => {
+    if (!paying || payTapped) return
+    const txnId = paying.txnId
+    setPayTapped(true)
+    sfxTap()
+    payTimers.current.push(
+      window.setTimeout(() => sfxPos(), 850),
+      window.setTimeout(() => bus.emit('payment-result', { txnId, ok: true }), 2000),
+    )
+  }
 
   const scrollToKiosk = () => {
     const vh = window.innerHeight / 100
@@ -369,7 +397,7 @@ export function Landing() {
         </div>
       </header>
 
-      <div className={`l-stage${vending ? ' l-vending' : ''}`} ref={stageRef}>
+      <div className={`l-stage${vending ? ' l-vending' : ''}${paying ? ' l-paying' : ''}`} ref={stageRef}>
         <div className="l-frame" ref={frameRef}>
           {(Object.keys(STILLS) as StillKey[]).map((k) => (
             <img
@@ -438,12 +466,33 @@ export function Landing() {
             <div className="l-panel-glare" />
           </div>
           <div
-            className={`l-tap-badge ${kioskLive && !vending && !touched ? 'on' : ''}`}
+            className={`l-tap-badge ${kioskLive && !vending && !paying && !touched ? 'on' : ''}`}
             style={{ left: `${PANEL.left + PANEL.width + 1.4}%`, top: `${PANEL.top + 5}%` }}
           >
             <span className="l-tap-dot" />
             {t(lang, 'tapBadge')}
           </div>
+
+          {/* payment moment: demo card taps the contactless reader ON the screen */}
+          {paying && (
+            <>
+              <button className={`l-card${payTapped ? ' tapped' : ''}`} onClick={payNow} aria-label={t(lang, 'payCta')}>
+                <span className="l-card-brand">DETOX PLUS +</span>
+                <span className="l-card-wave" aria-hidden="true">
+                  <i />
+                  <i />
+                  <i />
+                </span>
+                <span className="l-card-chip" />
+                <span className="l-card-num">•••• •••• •••• 4519</span>
+                <span className="l-card-holder">Y. YOUNIS</span>
+              </button>
+              <div className={`l-tap-badge l-pay-badge${payTapped ? '' : ' on'}`}>
+                <span className="l-tap-dot" />
+                💳 {t(lang, 'payCta')}
+              </div>
+            </>
+          )}
         </div>
 
         {/* ---------- copy ---------- */}

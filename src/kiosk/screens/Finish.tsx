@@ -43,6 +43,44 @@ export function Confirm({ lang, active, pick, onConfirm, onBack }: ConfirmProps)
   )
 }
 
+interface PaymentProps {
+  lang: Lang
+  active: boolean
+  pick: Recommendation | null
+  /** show the simulated card-tap button (nothing else answered the bus) */
+  allowSim: boolean
+  onSimPay: () => void
+  onBack: () => void
+}
+
+export function Payment({ lang, active, pick, allowSim, onSimPay, onBack }: PaymentProps) {
+  return (
+    <section className={`kiosk-page k-center k-pay ${active ? 'active' : ''}`}>
+      <h2 className="k-title">
+        <span className="k-title-ico">💳</span>
+        {t(lang, 'payTitle')}
+      </h2>
+      {pick && <div className="k-price k-pay-amount">{formatPrice(pick.product.priceCents)}</div>}
+      <p className="k-sub">{t(lang, 'payHint')}</p>
+      <div className="k-pay-waves" aria-hidden="true">
+        <i />
+        <i />
+        <i />
+      </div>
+      <div className="k-footer" style={{ width: '100%' }}>
+        <button className="k-btn k-btn-ghost" onClick={onBack}>
+          <span className="k-btn-arrow">‹</span> {t(lang, 'back')}
+        </button>
+        {allowSim && (
+          <button className="k-btn k-btn-primary" onClick={onSimPay}>
+            💳 {t(lang, 'paySim')}
+          </button>
+        )}
+      </div>
+    </section>
+  )
+}
+
 export function Dispensing({ lang, active, pick }: { lang: Lang; active: boolean; pick: Recommendation | null }) {
   return (
     <section className={`kiosk-page k-center ${active ? 'active' : ''}`}>
