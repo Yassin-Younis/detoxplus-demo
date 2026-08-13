@@ -49,9 +49,14 @@ body:has(.landing) {
   align-items: center;
   justify-content: space-between;
   padding: 14px 28px;
-  background: rgb(245 245 247 / 0.72);
-  backdrop-filter: saturate(180%) blur(20px);
-  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  /* fully transparent: the machine stays visible edge to edge */
+  background: transparent;
+  pointer-events: none;
+}
+
+/* the bar itself ignores clicks; its controls stay interactive */
+.l-nav > * {
+  pointer-events: auto;
 }
 
 .l-nav-brand {
