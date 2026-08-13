@@ -570,6 +570,9 @@
 .k-scan-actions {
   align-self: stretch;
   margin-top: 5cqw;
+  /* inset so both buttons survive the landing's compact zoom, which crops the
+     panel's outer edges on phones */
+  padding: 0 6cqw;
 }
 
 .k-scan-readouts {
