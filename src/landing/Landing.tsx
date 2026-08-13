@@ -211,9 +211,11 @@ export function Landing() {
             tx = -50 + (txT + 50) * z
             ty = -50 + (tyT + 50) * z
           } else {
-            scale = 1 + 0.35 * z
-            tx = -50 + 16.7 * z
-            ty = -50 - 10.7 * z
+            // gentler zoom: the v3 panel is taller — keep its top clear of
+            // the fixed nav and the whole screen in frame
+            scale = 1 + 0.25 * z
+            tx = -50 + 14.8 * z
+            ty = -50 + 8.0 * z
           }
         }
         frameRef.current.style.transform = `translate(${tx}%, ${ty}%) scale(${scale})`

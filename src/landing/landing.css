@@ -128,7 +128,6 @@ body:has(.landing) {
   opacity: 0;
   pointer-events: none;
   transition: opacity 600ms ease;
-  transform: perspective(90vh) rotateY(1.6deg);
 }
 
 .l-panel-live {
